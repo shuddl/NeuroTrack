@@ -54,6 +54,11 @@ eventBus.subscribe('ComplianceTracking', (data) => {
   console.log('Compliance Tracking Event:', data);
 });
 
+// Subscribe to events from DataAndMLPipeline and log them to the console
+eventBus.subscribe('distractionProbabilityUpdated', (data) => {
+  console.log('Distraction Probability Updated:', data);
+});
+
 // Bootstrap the application
 function bootstrap() {
   console.log('Hello World');
