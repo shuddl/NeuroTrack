@@ -298,3 +298,144 @@ To confirm that the Electron app is working, follow these steps:
 
 4. **Check the Output**:
    You should see an Electron window open with a "Hello World" message. This confirms that the Electron app is working and the application has started successfully.
+
+## Instructions to Confirm the ML Pipeline is Running
+
+To confirm that the integrated local ML pipeline is running, follow these steps:
+
+1. **Install Dependencies**:
+   Ensure you have Node.js installed. Then, run the following command in the root directory of the project to install the necessary dependencies:
+   ```bash
+   npm install
+   ```
+
+2. **Run the Application**:
+   Execute the following command to start the application:
+   ```bash
+   npm start
+   ```
+
+3. **Check the Console Logs**:
+   You should see console logs indicating that the TensorFlow.js model has been loaded or created, and that distraction probability updates are being published. Look for logs similar to the following:
+   ```
+   Model loaded successfully
+   Distraction probability updated: 0.123
+   ```
+
+4. **Performance Metrics**:
+   Ensure that the average inference time is sub-50ms on your hardware. You can add console logs in the `runInference` method in `src/DataAndMLPipeline.js` to measure the inference time.
+
+5. **Test the ML Pipeline**:
+   Follow these steps to test the ML pipeline:
+   - Focus on a goal for 2 minutes.
+   - Idle for 1 minute.
+   - Focus on a goal for another 2 minutes.
+   - Check the console logs or the database to confirm that distraction probability updates have been published.
+
+6. **Performance Checks**:
+   Ensure that the CPU usage is less than 5% under normal conditions and memory usage is less than 300MB.
+
+## Getting Started on macOS
+
+To get started with the NeuroTrack application on macOS, follow these steps:
+
+1. **Install Node.js**:
+   If you don't have Node.js installed, download and install it from [Node.js official website](https://nodejs.org/).
+
+2. **Clone the Repository**:
+   Clone the NeuroTrack repository to your local machine:
+   ```bash
+   git clone https://github.com/shuddl/NeuroTrack.git
+   cd NeuroTrack
+   ```
+
+3. **Install Dependencies**:
+   Run the following command in the root directory of the project to install the necessary dependencies:
+   ```bash
+   npm install
+   ```
+
+4. **Run the Application**:
+   Execute the following command to start the application:
+   ```bash
+   npm start
+   ```
+
+5. **Check the Output**:
+   You should see an Electron window open with the NeuroTrack UI. Check the console logs to confirm that the TensorFlow.js model has been loaded or created, and that distraction probability updates are being published.
+
+6. **Test the ML Pipeline**:
+   Follow these steps to test the ML pipeline:
+   - Focus on a goal for 2 minutes.
+   - Idle for 1 minute.
+   - Focus on a goal for another 2 minutes.
+   - Check the console logs or the database to confirm that distraction probability updates have been published.
+
+7. **Performance Checks**:
+   Ensure that the CPU usage is less than 5% under normal conditions and memory usage is less than 300MB.
+
+## Disclaimers
+
+Please note that there may be potential platform differences when running the NeuroTrack application on older macOS versions. If you encounter any issues, refer to the fallback instructions provided in the documentation.
+
+## Fallback Instructions
+
+If one or more advanced features break on older macOS versions, follow these fallback instructions:
+
+1. **Disable Advanced Features**:
+   Comment out or disable the advanced features in the code that are causing issues.
+
+2. **Run the Basic Application**:
+   Ensure that the basic functionality of the application is working by running the following command:
+   ```bash
+   npm start
+   ```
+
+3. **Check the Output**:
+   Verify that the basic application is running without errors and that the core features are functioning as expected.
+
+4. **Report Issues**:
+   If you encounter any issues, report them to the development team for further assistance.
+
+## Design Flaws Critique
+
+While the NeuroTrack application aims to provide a comprehensive solution for cognitive enhancement and behavioral modification, there may still be some design flaws that need to be addressed:
+
+1. **Overfitting**:
+   The current implementation may store minimal local features, ignoring classical user data, to reduce overfitting. However, this approach may result in a trade-off between model accuracy and generalization.
+
+2. **Platform Compatibility**:
+   Ensuring compatibility across different platforms (Windows, macOS, Linux) can be challenging. Some features may not work as expected on older versions of macOS.
+
+3. **Resource Utilization**:
+   While the application aims to minimize CPU and memory usage, there may still be scenarios where resource utilization exceeds the target limits. Continuous monitoring and optimization are required to address this issue.
+
+4. **User Privacy**:
+   Although the application follows strict privacy guidelines, there may still be concerns regarding data collection and storage. Providing clear privacy controls and transparency to users is essential.
+
+By addressing these design flaws and continuously improving the application, the NeuroTrack team can ensure a robust and effective solution for cognitive enhancement and behavioral modification.
+
+## Security & Privacy: Best Practices for Personal Use
+
+To ensure the security and privacy of your data while using the NeuroTrack application, follow these best practices:
+
+1. **Encryption at Rest**:
+   Implement minimal encryption at rest to protect your data. You can use tools like `sqlite3` with encryption extensions or other database encryption methods. Ensure that your database records are encrypted with a user-supplied passphrase.
+
+2. **Managing Secrets**:
+   Use environment variables to manage secrets and sensitive information. Create a `.env` file in the root directory of your project and add your secrets there. Use a library like `dotenv` to load these variables into your application. For example:
+   ```bash
+   # .env file
+   DB_PASS=your_database_password
+   ```
+
+3. **Privacy Considerations**:
+   The data collected by the NeuroTrack application is stored locally on your machine. If you want to purge your data, you can delete the local database files. Ensure that you have backups of any important data before purging.
+
+4. **Regular Updates**:
+   Keep your NeuroTrack application and dependencies up to date to ensure that you have the latest security patches and improvements.
+
+5. **User Control**:
+   Provide clear privacy controls and transparency to users. Allow users to export or delete their data at any time.
+
+By following these best practices, you can ensure the security and privacy of your data while using the NeuroTrack application.
