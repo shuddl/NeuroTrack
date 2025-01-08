@@ -2,6 +2,7 @@ const { EventEmitter } = require('eventemitter3');
 const WindowsFocusTracker = require('./platforms/WindowsFocusTracker');
 const MacOSFocusTracker = require('./platforms/MacOSFocusTracker');
 const LinuxFocusTracker = require('./platforms/LinuxFocusTracker');
+const { v4: uuidv4 } = require('uuid');
 
 class FocusTrackingEngine extends EventEmitter {
   constructor(eventBus) {
@@ -35,7 +36,13 @@ class FocusTrackingEngine extends EventEmitter {
     this.lastActivityTime = Date.now();
     if (this.currentState !== 'Work Focus') {
       this.currentState = 'Work Focus';
-      this.eventBus.publish('focusChange', { state: this.currentState, ...data });
+      const eventData = {
+        recordId: uuidv4(),
+        timestamp: new Date(),
+        applicationName: data.activeWindow,
+        userState: this.currentState
+      };
+      this.eventBus.publish('focusChange', eventData);
     }
   }
 
@@ -43,7 +50,13 @@ class FocusTrackingEngine extends EventEmitter {
     if (Date.now() - this.lastActivityTime > this.idleThreshold) {
       if (this.currentState !== 'Break/Leisure') {
         this.currentState = 'Break/Leisure';
-        this.eventBus.publish('idleChange', { state: this.currentState, ...data });
+        const eventData = {
+          recordId: uuidv4(),
+          timestamp: new Date(),
+          applicationName: data.activeWindow || 'Unknown',
+          userState: this.currentState
+        };
+        this.eventBus.publish('idleChange', eventData);
       }
     }
   }
