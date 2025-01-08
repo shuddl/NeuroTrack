@@ -47,4 +47,37 @@ describe('DataAndMLPipeline', () => {
     const prediction = await dataAndMLPipeline.getRealTimePrediction(data);
     expect(prediction).to.not.be.null;
   });
+
+  it('should use a ring buffer for incoming data', (done) => {
+    const data = {
+      timeOfDay: 12,
+      currentAppUsage: 1,
+      pastContextSwitches: 3
+    };
+
+    for (let i = 0; i < 101; i++) {
+      dataAndMLPipeline.performInference(data);
+    }
+
+    setTimeout(() => {
+      expect(dataAndMLPipeline.dataBuffer.getItems().length).to.equal(100);
+      done();
+    }, 100);
+  });
+
+  it('should move heavy computations to idle periods using setTimeout', (done) => {
+    const data = {
+      timeOfDay: 12,
+      currentAppUsage: 1,
+      pastContextSwitches: 3
+    };
+
+    const updateDistractionProbabilitySpy = sinon.spy(dataAndMLPipeline, 'updateDistractionProbability');
+    dataAndMLPipeline.performInference(data);
+
+    setTimeout(() => {
+      expect(updateDistractionProbabilitySpy.calledOnce).to.be.true;
+      done();
+    }, 100);
+  });
 });

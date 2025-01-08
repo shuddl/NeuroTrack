@@ -1,10 +1,28 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 
+class RingBuffer {
+  constructor(size) {
+    this.size = size;
+    this.buffer = new Array(size);
+    this.index = 0;
+  }
+
+  push(item) {
+    this.buffer[this.index] = item;
+    this.index = (this.index + 1) % this.size;
+  }
+
+  getItems() {
+    return this.buffer.filter(item => item !== undefined);
+  }
+}
+
 class AlwaysOnTopUI {
   constructor(eventBus) {
     this.eventBus = eventBus;
     this.window = null;
+    this.dataBuffer = new RingBuffer(100);
     this.createWindow();
     this.setupEventListeners();
   }
@@ -27,11 +45,13 @@ class AlwaysOnTopUI {
 
   setupEventListeners() {
     this.eventBus.subscribe('focusChange', (data) => {
-      this.updateUI(data);
+      this.dataBuffer.push(data);
+      setTimeout(() => this.updateUI(data), 0);
     });
 
     this.eventBus.subscribe('idleChange', (data) => {
-      this.updateUI(data);
+      this.dataBuffer.push(data);
+      setTimeout(() => this.updateUI(data), 0);
     });
 
     ipcMain.on('acceptPrompt', (event, data) => {

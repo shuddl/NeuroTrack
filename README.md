@@ -452,3 +452,83 @@ const idleEvent = {
 };
 eventBus.publish('idleChange', idleEvent);
 ```
+
+## Optimization Techniques and System Architecture Alignment
+
+### Optimization Techniques
+
+1. **Refactoring for Efficient Idle Checking**:
+   - The `startIdleCheck` method in `FocusTrackingEngine.js` was refactored to use `setTimeout` instead of `setInterval`. This change reduces redundant polling and improves efficiency by scheduling idle checks only when necessary.
+
+2. **Ring Buffer Implementation**:
+   - Ring buffers were implemented in various modules (`BehavioralModificationEngine.js`, `CognitiveEnhancementModule.js`, `DataAndMLPipeline.js`, `AlwaysOnTopUI.js`) to limit in-memory data structures and rely on streaming or ring buffers. This approach helps manage memory usage effectively.
+
+3. **Moving Heavy Computations to Idle Periods**:
+   - Heavy computations in methods like `checkSustainedFocus`, `checkContextSwitching`, `triggerNeuralPatternDisruptor`, `scheduleMicroBreak`, and `performInference` were moved to idle periods using `setTimeout`. This ensures that resource-intensive tasks are performed when the system is less busy, reducing the impact on overall performance.
+
+### System Architecture Alignment
+
+The optimization techniques align with the system architecture constraints as follows:
+
+1. **Efficient Idle Checking**:
+   - By using `setTimeout` for idle checking, the system reduces unnecessary polling, leading to lower CPU usage. This aligns with the performance constraint of aiming for <1% CPU overhead under normal conditions.
+
+2. **Memory Management with Ring Buffers**:
+   - Implementing ring buffers helps manage memory usage by limiting the size of in-memory data structures. This aligns with the memory constraint of not exceeding 100MB in typical usage for the Focus Tracking Engine and <300MB total for all system services combined.
+
+3. **Idle Period Computations**:
+   - Moving heavy computations to idle periods ensures that resource-intensive tasks do not interfere with real-time operations. This aligns with the goal of minimizing resource overhead and maintaining a responsive system.
+
+### Performance Testing
+
+To measure resource usage and confirm the effectiveness of the optimizations, follow these steps:
+
+1. **CPU and Memory Usage Benchmarks**:
+   - Use tools like `top`, `htop`, or `Activity Monitor` to monitor CPU and memory usage while running the application.
+   - Perform typical user interactions and observe the peak usage under normal workloads.
+
+2. **Performance Test Script**:
+   - Create a script to simulate user interactions and measure resource usage. For example:
+
+```javascript
+const EventBus = require('./eventBus');
+const FocusTrackingEngine = require('./FocusTrackingEngine');
+const BehavioralModificationEngine = require('./BehavioralModificationEngine');
+const CognitiveEnhancementModule = require('./CognitiveEnhancementModule');
+const DataAndMLPipeline = require('./DataAndMLPipeline');
+const AlwaysOnTopUI = require('./AlwaysOnTopUI');
+
+const eventBus = new EventBus();
+const focusTrackingEngine = new FocusTrackingEngine(eventBus);
+const behavioralModificationEngine = new BehavioralModificationEngine(eventBus);
+const cognitiveEnhancementModule = new CognitiveEnhancementModule(eventBus);
+const dataAndMLPipeline = new DataAndMLPipeline(eventBus);
+const alwaysOnTopUI = new AlwaysOnTopUI(eventBus);
+
+// Simulate user interactions
+const simulateUserInteractions = () => {
+  const focusEvent = {
+    recordId: '1',
+    timestamp: new Date().toISOString(),
+    applicationName: 'TestApp',
+    userState: 'FOCUS'
+  };
+  eventBus.publish('focusChange', focusEvent);
+
+  const idleEvent = {
+    recordId: '2',
+    timestamp: new Date().toISOString(),
+    applicationName: 'TestApp',
+    userState: 'IDLE'
+  };
+  eventBus.publish('idleChange', idleEvent);
+};
+
+// Run the simulation
+simulateUserInteractions();
+```
+
+3. **Analyze Results**:
+   - Analyze the CPU and memory usage data collected during the benchmarks and simulation. Ensure that the usage remains within the target limits of <5% CPU and <300MB memory usage total.
+
+By following these steps, you can validate the effectiveness of the optimizations and ensure that the system meets the performance and resource utilization goals.

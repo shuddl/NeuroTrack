@@ -11,6 +11,7 @@ class FocusTrackingEngine extends EventEmitter {
     this.currentState = 'Work Focus';
     this.idleThreshold = 300000; // 5 minutes
     this.lastActivityTime = Date.now();
+    this.idleCheckTimeout = null;
 
     this.platformTracker = this.getPlatformTracker();
     this.platformTracker.on('focusChange', this.handleFocusChange.bind(this));
@@ -62,11 +63,20 @@ class FocusTrackingEngine extends EventEmitter {
   }
 
   startIdleCheck() {
-    setInterval(() => {
+    const checkIdle = () => {
       if (Date.now() - this.lastActivityTime > this.idleThreshold) {
         this.handleIdleChange({});
       }
-    }, 1000);
+      this.idleCheckTimeout = setTimeout(checkIdle, 1000);
+    };
+    this.idleCheckTimeout = setTimeout(checkIdle, 1000);
+  }
+
+  stopIdleCheck() {
+    if (this.idleCheckTimeout) {
+      clearTimeout(this.idleCheckTimeout);
+      this.idleCheckTimeout = null;
+    }
   }
 }
 

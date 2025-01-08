@@ -1,10 +1,27 @@
 const BehavioralEventsDAO = require('./BehavioralEventsDAO');
 
+class RingBuffer {
+  constructor(size) {
+    this.size = size;
+    this.buffer = new Array(size);
+    this.index = 0;
+  }
+
+  push(item) {
+    this.buffer[this.index] = item;
+    this.index = (this.index + 1) % this.size;
+  }
+
+  getItems() {
+    return this.buffer.filter(item => item !== undefined);
+  }
+}
+
 class BehavioralModificationEngine {
   constructor(eventBus) {
     this.eventBus = eventBus;
-    this.focusIntervals = [];
-    this.contextSwitches = [];
+    this.focusIntervals = new RingBuffer(100);
+    this.contextSwitches = new RingBuffer(100);
     this.sustainedFocusThreshold = 25 * 60 * 1000; // 25 minutes
     this.contextSwitchThreshold = 5 * 60 * 1000; // 5 minutes
     this.behavioralEventsDAO = new BehavioralEventsDAO();
@@ -18,14 +35,14 @@ class BehavioralModificationEngine {
     this.focusIntervals.push({ timestamp: now, data });
 
     // Check for sustained focus
-    this.checkSustainedFocus(now);
+    setTimeout(() => this.checkSustainedFocus(now), 0);
 
     // Check for frequent context switching
-    this.checkContextSwitching(now);
+    setTimeout(() => this.checkContextSwitching(now), 0);
   }
 
   checkSustainedFocus(now) {
-    const sustainedFocusIntervals = this.focusIntervals.filter(
+    const sustainedFocusIntervals = this.focusIntervals.getItems().filter(
       interval => now - interval.timestamp <= this.sustainedFocusThreshold
     );
 
@@ -42,7 +59,7 @@ class BehavioralModificationEngine {
   }
 
   checkContextSwitching(now) {
-    const recentContextSwitches = this.contextSwitches.filter(
+    const recentContextSwitches = this.contextSwitches.getItems().filter(
       switchEvent => now - switchEvent.timestamp <= this.contextSwitchThreshold
     );
 

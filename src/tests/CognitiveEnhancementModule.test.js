@@ -96,4 +96,68 @@ describe('CognitiveEnhancementModule', () => {
       done();
     }, 100);
   });
+
+  it('should use a ring buffer for distraction patterns', (done) => {
+    const distractionPatternSpy = sinon.spy();
+    eventBus.subscribe('NeuralPatternDisruptor', distractionPatternSpy);
+
+    const focusEvent = {
+      recordId: '1',
+      timestamp: new Date().toISOString(),
+      applicationName: 'TestApp',
+      userState: 'FOCUS'
+    };
+
+    for (let i = 0; i < 101; i++) {
+      eventBus.publish('focusChange', focusEvent);
+    }
+
+    setTimeout(() => {
+      expect(cognitiveEnhancementModule.distractionPatterns.getItems().length).to.equal(100);
+      done();
+    }, 100);
+  });
+
+  it('should use a ring buffer for deep work sessions', (done) => {
+    const deepWorkSessionSpy = sinon.spy();
+    eventBus.subscribe('MicroBreak', deepWorkSessionSpy);
+
+    const idleEvent = {
+      recordId: '1',
+      timestamp: new Date().toISOString(),
+      applicationName: 'TestApp',
+      userState: 'IDLE'
+    };
+
+    for (let i = 0; i < 101; i++) {
+      eventBus.publish('idleChange', idleEvent);
+    }
+
+    setTimeout(() => {
+      expect(cognitiveEnhancementModule.deepWorkSessions.getItems().length).to.equal(100);
+      done();
+    }, 100);
+  });
+
+  it('should move heavy computations to idle periods using setTimeout', (done) => {
+    const distractionPatternSpy = sinon.spy();
+    eventBus.subscribe('NeuralPatternDisruptor', distractionPatternSpy);
+
+    const focusEvent = {
+      recordId: '1',
+      timestamp: new Date().toISOString(),
+      applicationName: 'TestApp',
+      userState: 'FOCUS'
+    };
+
+    for (let i = 0; i < 6; i++) {
+      eventBus.publish('focusChange', focusEvent);
+    }
+
+    setTimeout(() => {
+      expect(distractionPatternSpy.calledOnce).to.be.true;
+      expect(distractionPatternSpy.args[0][0]).to.deep.include({ eventType: 'NeuralPatternDisruptor' });
+      done();
+    }, 100);
+  });
 });

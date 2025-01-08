@@ -1,8 +1,25 @@
+class RingBuffer {
+  constructor(size) {
+    this.size = size;
+    this.buffer = new Array(size);
+    this.index = 0;
+  }
+
+  push(item) {
+    this.buffer[this.index] = item;
+    this.index = (this.index + 1) % this.size;
+  }
+
+  getItems() {
+    return this.buffer.filter(item => item !== undefined);
+  }
+}
+
 class CognitiveEnhancementModule {
   constructor(eventBus) {
     this.eventBus = eventBus;
-    this.distractionPatterns = [];
-    this.deepWorkSessions = [];
+    this.distractionPatterns = new RingBuffer(100);
+    this.deepWorkSessions = new RingBuffer(100);
     this.alertFrequency = 1; // Default alert frequency
     this.uiDensity = 1; // Default UI density
 
@@ -15,8 +32,8 @@ class CognitiveEnhancementModule {
     this.distractionPatterns.push({ timestamp: now, data });
 
     // Implement logic to detect emerging distraction patterns
-    if (this.distractionPatterns.length > 5) {
-      this.triggerNeuralPatternDisruptor();
+    if (this.distractionPatterns.getItems().length > 5) {
+      setTimeout(() => this.triggerNeuralPatternDisruptor(), 0);
     }
   }
 
@@ -25,8 +42,8 @@ class CognitiveEnhancementModule {
     this.deepWorkSessions.push({ timestamp: now, data });
 
     // Implement logic to detect extended deep work sessions
-    if (this.deepWorkSessions.length > 10) {
-      this.scheduleMicroBreak();
+    if (this.deepWorkSessions.getItems().length > 10) {
+      setTimeout(() => this.scheduleMicroBreak(), 0);
     }
   }
 
@@ -65,7 +82,7 @@ class CognitiveEnhancementModule {
 
   adjustCognitiveLoad() {
     // Implement cognitive load balancing to adjust alert frequency or UI density
-    if (this.deepWorkSessions.length > 10) {
+    if (this.deepWorkSessions.getItems().length > 10) {
       this.alertFrequency = 0.5; // Reduce alert frequency
       this.uiDensity = 0.5; // Reduce UI density
     } else {

@@ -39,4 +39,24 @@ describe('FocusTrackingEngine', () => {
       done();
     }, 2000);
   });
+
+  it('should use setTimeout for idle checking', (done) => {
+    const idleCheckSpy = sinon.spy(focusTrackingEngine, 'startIdleCheck');
+    focusTrackingEngine.startIdleCheck();
+
+    setTimeout(() => {
+      expect(idleCheckSpy.calledOnce).to.be.true;
+      done();
+    }, 100);
+  });
+
+  it('should stop idle check when application is closed', (done) => {
+    const stopIdleCheckSpy = sinon.spy(focusTrackingEngine, 'stopIdleCheck');
+    focusTrackingEngine.stopIdleCheck();
+
+    setTimeout(() => {
+      expect(stopIdleCheckSpy.calledOnce).to.be.true;
+      done();
+    }, 100);
+  });
 });
