@@ -1,4 +1,5 @@
 const TimerRecordsDAO = require('../dao/TimerRecordsDAO');
+const { ipcMain } = require('electron');
 
 class TimerManager {
   constructor() {
@@ -22,7 +23,9 @@ class TimerManager {
       this.currentTimer = 'goal';
       this.timerInterval = setInterval(() => {
         this.goalFocusTime += 1;
+        this.emitGoalTimeUpdate();
       }, 1000);
+      ipcMain.emit('update-goal-time', this.goalFocusTime); // P39b5
     }
   }
 
@@ -39,7 +42,9 @@ class TimerManager {
       this.currentTimer = 'non-goal';
       this.timerInterval = setInterval(() => {
         this.nonGoalFocusTime += 1;
+        this.emitNonGoalTimeUpdate();
       }, 1000);
+      ipcMain.emit('update-non-goal-time', this.nonGoalFocusTime); // P39b5
     }
   }
 
@@ -56,6 +61,14 @@ class TimerManager {
     } catch (error) {
       console.error('Error storing daily totals:', error);
     }
+  }
+
+  emitGoalTimeUpdate() {
+    ipcMain.emit('update-goal-time', this.goalFocusTime);
+  }
+
+  emitNonGoalTimeUpdate() {
+    ipcMain.emit('update-non-goal-time', this.nonGoalFocusTime);
   }
 }
 
