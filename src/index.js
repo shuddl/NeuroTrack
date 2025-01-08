@@ -21,11 +21,22 @@ const focusRecordsDAO = new FocusRecordsDAO();
 eventBus.subscribe('focusChange', (data) => {
   console.log('Focus Change Event:', data);
   focusRecordsDAO.addRecord(data);
+  behavioralModificationEngine.trackFocusEvent(data);
 });
 
 eventBus.subscribe('idleChange', (data) => {
   console.log('Idle Change Event:', data);
   focusRecordsDAO.addRecord(data);
+  behavioralModificationEngine.trackFocusEvent(data);
+});
+
+// Subscribe to reward and degradation events from BehavioralModificationEngine and log them to the console
+eventBus.subscribe('RewardEvent', (data) => {
+  console.log('Reward Event:', data);
+});
+
+eventBus.subscribe('productivityDegradation', (data) => {
+  console.log('Productivity Degradation Event:', data);
 });
 
 // Bootstrap the application

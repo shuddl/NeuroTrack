@@ -341,3 +341,114 @@ focusRecordsCleanup.cleanupOldRecords(30);
 
 - The local database operations are optimized for minimal CPU overhead.
 - Expected CPU usage is less than 1% during normal operation, with occasional spikes during intensive CRUD operations.
+
+## Usage Examples for BehavioralModificationEngine and BehavioralEventsDAO
+
+### BehavioralModificationEngine
+
+The `BehavioralModificationEngine` class tracks focus intervals and context switching, triggers reward events, and logs them. Below are some usage examples:
+
+```javascript
+const EventBus = require('./eventBus');
+const BehavioralModificationEngine = require('./BehavioralModificationEngine');
+
+const eventBus = new EventBus();
+const behavioralModificationEngine = new BehavioralModificationEngine(eventBus);
+
+// Simulate focus change event
+const focusEvent = {
+  recordId: '1',
+  timestamp: new Date().toISOString(),
+  applicationName: 'TestApp',
+  userState: 'FOCUS'
+};
+eventBus.publish('focusChange', focusEvent);
+
+// Simulate idle change event
+const idleEvent = {
+  recordId: '2',
+  timestamp: new Date().toISOString(),
+  applicationName: 'TestApp',
+  userState: 'IDLE'
+};
+eventBus.publish('idleChange', idleEvent);
+```
+
+### BehavioralEventsDAO
+
+The `BehavioralEventsDAO` class provides methods to handle CRUD operations for the `BehavioralEvents` table. Below are some usage examples:
+
+```javascript
+const BehavioralEventsDAO = require('./BehavioralEventsDAO');
+const behavioralEventsDAO = new BehavioralEventsDAO();
+
+// Add a new event
+const newEvent = {
+  eventId: '1',
+  eventType: 'RewardEvent',
+  timestamp: new Date().toISOString(),
+  metadata: { message: 'Sustained focus achieved' }
+};
+behavioralEventsDAO.addEvent(newEvent);
+
+// Update an existing event
+const updatedEvent = {
+  ...newEvent,
+  eventType: 'productivityDegradation',
+  metadata: { message: 'Frequent context switching detected' }
+};
+behavioralEventsDAO.updateEvent(updatedEvent);
+
+// Delete an event
+behavioralEventsDAO.deleteEvent(newEvent.eventId);
+
+// Query events
+behavioralEventsDAO.queryEvents((err, rows) => {
+  if (err) {
+    console.error('Error querying events:', err);
+  } else {
+    console.log('Queried Events:', rows);
+  }
+});
+```
+
+## Basic Console or Log-Based Feedback for Testing
+
+To test the `BehavioralModificationEngine` and `BehavioralEventsDAO`, you can use console logs to verify the events being triggered and logged. Below is an example:
+
+```javascript
+const EventBus = require('./eventBus');
+const BehavioralModificationEngine = require('./BehavioralModificationEngine');
+const BehavioralEventsDAO = require('./BehavioralEventsDAO');
+
+const eventBus = new EventBus();
+const behavioralModificationEngine = new BehavioralModificationEngine(eventBus);
+const behavioralEventsDAO = new BehavioralEventsDAO();
+
+// Subscribe to reward and degradation events
+eventBus.subscribe('RewardEvent', (data) => {
+  console.log('Reward Event:', data);
+});
+
+eventBus.subscribe('productivityDegradation', (data) => {
+  console.log('Productivity Degradation Event:', data);
+});
+
+// Simulate focus change event
+const focusEvent = {
+  recordId: '1',
+  timestamp: new Date().toISOString(),
+  applicationName: 'TestApp',
+  userState: 'FOCUS'
+};
+eventBus.publish('focusChange', focusEvent);
+
+// Simulate idle change event
+const idleEvent = {
+  recordId: '2',
+  timestamp: new Date().toISOString(),
+  applicationName: 'TestApp',
+  userState: 'IDLE'
+};
+eventBus.publish('idleChange', idleEvent);
+```
