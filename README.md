@@ -276,3 +276,25 @@ To confirm that the event bus is working, follow these steps:
    ```
 
    This confirms that the event bus is working and the application has started successfully.
+
+## Instructions to Run the Electron App
+
+To confirm that the Electron app is working, follow these steps:
+
+1. **Install Node.js**:
+   If you don't have Node.js installed, download and install it from [Node.js official website](https://nodejs.org/).
+
+2. **Install Dependencies**:
+   Run the following command in the root directory of the project to install the necessary dependencies:
+   ```bash
+   npm install
+   ```
+
+3. **Run the Electron App**:
+   Execute the following command to start the Electron app:
+   ```bash
+   npm start
+   ```
+
+4. **Check the Output**:
+   You should see an Electron window open with a "Hello World" message. This confirms that the Electron app is working and the application has started successfully.
