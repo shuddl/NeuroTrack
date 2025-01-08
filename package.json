@@ -4,9 +4,10 @@
   "description": "A cognitive enhancement and behavioral modification platform",
   "main": "src/index.js",
   "scripts": {
-    "start": "node src/index.js"
+    "start": "electron ."
   },
   "dependencies": {
+    "electron": "^13.6.9",
     "eventemitter3": "^4.0.7"
   },
   "author": "",
