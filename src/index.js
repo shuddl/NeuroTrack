@@ -15,6 +15,15 @@ const cognitiveEnhancementModule = new CognitiveEnhancementModule(eventBus);
 const dataAndMLPipeline = new DataAndMLPipeline(eventBus);
 const alwaysOnTopUI = new AlwaysOnTopUI(eventBus);
 
+// Subscribe to focus/idle events from FocusTrackingEngine and log them
+eventBus.subscribe('focusChange', (data) => {
+  console.log('Focus Change Event:', data);
+});
+
+eventBus.subscribe('idleChange', (data) => {
+  console.log('Idle Change Event:', data);
+});
+
 // Bootstrap the application
 function bootstrap() {
   console.log('Hello World');
