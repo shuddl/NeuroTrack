@@ -36,6 +36,43 @@ class DataAndMLPipeline {
     this.model = newModel;
     console.log('Model replaced successfully');
   }
+
+  async predictDistractionProbability(features) {
+    if (!this.model) {
+      console.error('Model not loaded');
+      return;
+    }
+
+    const inputTensor = tf.tensor2d([features]);
+    const prediction = this.model.predict(inputTensor);
+    const distractionProbability = prediction.dataSync()[0];
+
+    return distractionProbability;
+  }
+
+  async handleFocusEvent(features) {
+    const distractionProbability = await this.predictDistractionProbability(features);
+    this.eventBus.publish('distractionProbabilityUpdated', { distractionProbability });
+    console.log('Distraction probability updated:', distractionProbability);
+  }
+
+  async handleDailySession(features) {
+    const distractionProbability = await this.predictDistractionProbability(features);
+    this.eventBus.publish('distractionProbabilityUpdated', { distractionProbability });
+    console.log('Distraction probability updated:', distractionProbability);
+  }
+
+  async predictDistractionProbabilityFromFeatures(features) {
+    const { timeOfDay, userIdleFrequency } = features;
+    const inputFeatures = [timeOfDay, userIdleFrequency];
+    return await this.predictDistractionProbability(inputFeatures);
+  }
+
+  async runInferenceAndUpdate(features) {
+    const distractionProbability = await this.predictDistractionProbabilityFromFeatures(features);
+    this.eventBus.publish('distractionProbabilityUpdated', { distractionProbability });
+    console.log('Distraction probability updated:', distractionProbability);
+  }
 }
 
 module.exports = DataAndMLPipeline;

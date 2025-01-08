@@ -17,3 +17,26 @@ contextBridge.exposeInMainWorld('timers', {
         ipcRenderer.on('update-non-goal-time', (event, time) => callback(time));
     }
 });
+
+window.addEventListener('DOMContentLoaded', () => {
+    const goalButton = document.getElementById('goal-button');
+    const nonGoalButton = document.getElementById('non-goal-button');
+
+    goalButton.addEventListener('click', () => {
+        ipcRenderer.send('start-goal-timer');
+    });
+
+    nonGoalButton.addEventListener('click', () => {
+        ipcRenderer.send('start-non-goal-timer');
+    });
+
+    ipcRenderer.on('update-goal-time', (event, time) => {
+        const goalTimeElement = document.getElementById('goal-time');
+        goalTimeElement.textContent = new Date(time * 1000).toISOString().substr(11, 8);
+    });
+
+    ipcRenderer.on('update-non-goal-time', (event, time) => {
+        const nonGoalTimeElement = document.getElementById('non-goal-time');
+        nonGoalTimeElement.textContent = new Date(time * 1000).toISOString().substr(11, 8);
+    });
+});
