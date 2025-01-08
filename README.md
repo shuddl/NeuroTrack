@@ -228,7 +228,7 @@ mlInference {
 
 8.3 Security Verification Protocols
 	1.	Static Code Analysis: Automated scanning for common vulnerabilities (buffer overflows, injection points).
-	2.	Runtime Auditing: Monitor driver signatures, ensure no tampering or unauthorized hooking occurs.
+	2.Runtime Auditing: Monitor driver signatures, ensure no tampering or unauthorized hooking occurs.
 
 8.4 Privacy Compliance Checking
 	1.	Regulatory Requirements: GDPR, CCPA compliance for data usage, user consents, and data subject requests.
@@ -252,3 +252,27 @@ By integrating kernel-level focus tracking, an event-driven behavioral modificat
 	2.	Behavioral Modification Efficacy: Does it provide immediate, data-driven micro-feedback to shape long-term productive habits without intruding on the user’s sense of autonomy?
 
 Adhering to these design principles guarantees a system that not only measures productivity but actively engineers heightened focus, resilience to distraction, and sustainable behavior change—fulfilling your directive to create a truly innovative productivity tracking and behavioral modification platform.
+
+## Instructions to Run "Hello World" Example
+
+To confirm that the event bus is working, follow these steps:
+
+1. **Install Dependencies**:
+   Ensure you have Node.js installed. Then, run the following command in the root directory of the project to install the necessary dependencies:
+   ```bash
+   npm install
+   ```
+
+2. **Run the Application**:
+   Execute the following command to start the application:
+   ```bash
+   npm start
+   ```
+
+3. **Check the Output**:
+   You should see the following output in the console:
+   ```
+   Hello World
+   ```
+
+   This confirms that the event bus is working and the application has started successfully.
