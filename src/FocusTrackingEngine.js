@@ -2,6 +2,7 @@ const { EventEmitter } = require('eventemitter3');
 const WindowsFocusTracker = require('./platforms/WindowsFocusTracker');
 const MacOSFocusTracker = require('./platforms/MacOSFocusTracker');
 const LinuxFocusTracker = require('./platforms/LinuxFocusTracker');
+const FocusRecordsDAO = require('../dao/FocusRecordsDAO');
 
 class FocusTrackingEngine extends EventEmitter {
   constructor(eventBus) {
@@ -16,6 +17,15 @@ class FocusTrackingEngine extends EventEmitter {
     this.platformTracker.on('idleChange', this.handleIdleChange.bind(this));
 
     this.startIdleCheck();
+    this.initializeDatabase();
+  }
+
+  async initializeDatabase() {
+    try {
+      await FocusRecordsDAO.createTable();
+    } catch (error) {
+      console.error('Error initializing database:', error);
+    }
   }
 
   getPlatformTracker() {
@@ -31,19 +41,29 @@ class FocusTrackingEngine extends EventEmitter {
     }
   }
 
-  handleFocusChange(data) {
+  async handleFocusChange(data) {
     this.lastActivityTime = Date.now();
     if (this.currentState !== 'Work Focus') {
       this.currentState = 'Work Focus';
       this.eventBus.publish('focusChange', { state: this.currentState, ...data });
     }
+    try {
+      await FocusRecordsDAO.insertRecord(data.activeWindow, this.currentState);
+    } catch (error) {
+      console.error('Error inserting focus record:', error);
+    }
   }
 
-  handleIdleChange(data) {
+  async handleIdleChange(data) {
     if (Date.now() - this.lastActivityTime > this.idleThreshold) {
       if (this.currentState !== 'Break/Leisure') {
         this.currentState = 'Break/Leisure';
         this.eventBus.publish('idleChange', { state: this.currentState, ...data });
+      }
+      try {
+        await FocusRecordsDAO.insertRecord(data.activeWindow, this.currentState);
+      } catch (error) {
+        console.error('Error inserting idle record:', error);
       }
     }
   }

@@ -1,3 +1,5 @@
+const { app, BrowserWindow } = require('electron');
+const path = require('path');
 const EventBus = require('./eventBus');
 const FocusTrackingEngine = require('./FocusTrackingEngine');
 const BehavioralModificationEngine = require('./BehavioralModificationEngine');
@@ -24,10 +26,32 @@ eventBus.subscribe('idleChange', (data) => {
   console.log('Idle Change Event:', data);
 });
 
-// Bootstrap the application
-function bootstrap() {
-  console.log('Hello World');
-  eventBus.publish('appStarted', { message: 'Application has started' });
+// Create a new BrowserWindow and load index.html
+function createWindow() {
+  const mainWindow = new BrowserWindow({
+    width: 800,
+    height: 600,
+    webPreferences: {
+      preload: path.join(__dirname, 'preload.js')
+    }
+  });
+
+  mainWindow.loadFile('index.html');
 }
 
-bootstrap();
+// Bootstrap the application
+app.whenReady().then(() => {
+  createWindow();
+
+  app.on('activate', () => {
+    if (BrowserWindow.getAllWindows().length === 0) {
+      createWindow();
+    }
+  });
+});
+
+app.on('window-all-closed', () => {
+  if (process.platform !== 'darwin') {
+    app.quit();
+  }
+});
