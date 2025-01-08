@@ -17,13 +17,24 @@ const cognitiveEnhancementModule = new CognitiveEnhancementModule(eventBus);
 const dataAndMLPipeline = new DataAndMLPipeline(eventBus);
 const alwaysOnTopUI = new AlwaysOnTopUI(eventBus);
 
+// Load the TensorFlow.js model when the application starts
+dataAndMLPipeline.loadModel();
+
 // Subscribe to focus/idle events from FocusTrackingEngine and log them
 eventBus.subscribe('focusChange', (data) => {
   console.log('Focus Change Event:', data);
+  // Trigger the ML pipeline on focus change
+  dataAndMLPipeline.handleFocusEvent(data);
 });
 
 eventBus.subscribe('idleChange', (data) => {
   console.log('Idle Change Event:', data);
+});
+
+// Subscribe to daily session events and trigger the ML pipeline
+eventBus.subscribe('dailySession', (data) => {
+  console.log('Daily Session Event:', data);
+  dataAndMLPipeline.handleDailySession(data);
 });
 
 // Create a new BrowserWindow and load index.html
