@@ -71,7 +71,7 @@ describe('BehavioralModificationEngine', () => {
 
     setTimeout(() => {
       expect(degradationEventSpy.calledOnce).to.be.true;
-      expect(degradationEventSpy.args[0][0]).to.deep.include({ eventType: 'productivityDegradation' });
+      expect(degradationEventSpy.args[0][0]).to.deep include({ eventType: 'productivityDegradation' });
       done();
     }, 100);
   });
@@ -150,16 +150,16 @@ describe('BehavioralModificationEngine', () => {
     }
 
     setTimeout(() => {
-      expect(rewardEventSpy.calledOnce).to.be.true;
-      expect(rewardEventSpy.args[0][0]).to.deep.include({ eventType: 'RewardEvent' });
+      expect(rewardEventSpy.calledOnce).to be true;
+      expect(rewardEventSpy.args[0][0]).to deep include({ eventType: 'RewardEvent' });
       done();
     }, 100);
   });
 
   it('should anonymize user IDs using hashed tokens', (done) => {
     const anonymizedUserID = behavioralModificationEngine.anonymizeUserID('testUserID');
-    expect(anonymizedUserID).to.be.a('string');
-    expect(anonymizedUserID).to.have.lengthOf(64); // SHA-256 hash length
+    expect(anonymizedUserID).to be a('string');
+    expect(anonymizedUserID).to have lengthOf(64); // SHA-256 hash length
     done();
   });
 
@@ -167,8 +167,8 @@ describe('BehavioralModificationEngine', () => {
     const logSyncFailureSpy = sinon.spy(behavioralModificationEngine, 'logSyncFailure');
     const error = new Error('Test sync failure');
     behavioralModificationEngine.logSyncFailure(error);
-    expect(logSyncFailureSpy.calledOnce).to.be.true;
-    expect(logSyncFailureSpy.args[0][0]).to.deep.equal(error);
+    expect(logSyncFailureSpy.calledOnce).to be true;
+    expect(logSyncFailureSpy.args[0][0]).to deep equal(error);
     done();
   });
 });

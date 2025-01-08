@@ -164,7 +164,7 @@ describe('CognitiveEnhancementModule', () => {
   it('should anonymize user IDs using hashed tokens', (done) => {
     const anonymizedUserID = cognitiveEnhancementModule.anonymizeUserID('testUserID');
     expect(anonymizedUserID).to.be.a('string');
-    expect(anonymizedUserID).to.have lengthOf(64); // SHA-256 hash length
+    expect(anonymizedUserID).to.have.lengthOf(64); // SHA-256 hash length
     done();
   });
 
