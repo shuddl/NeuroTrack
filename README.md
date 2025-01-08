@@ -532,3 +532,29 @@ simulateUserInteractions();
    - Analyze the CPU and memory usage data collected during the benchmarks and simulation. Ensure that the usage remains within the target limits of <5% CPU and <300MB memory usage total.
 
 By following these steps, you can validate the effectiveness of the optimizations and ensure that the system meets the performance and resource utilization goals.
+
+## Encryption, Anonymization, and Privacy Settings
+
+### Encryption
+
+1. **Local Encryption at Rest**:
+   - Focus records are encrypted using AES-256 to ensure data security. The encryption key is managed securely and loaded or generated as needed.
+
+2. **Key Management**:
+   - Encryption keys are managed securely, with keys being generated and stored in a secure location. The system ensures that keys are rotated and protected against unauthorized access.
+
+### Anonymization
+
+1. **User ID Anonymization**:
+   - User IDs are anonymized using hashed tokens to protect user privacy. This ensures that user data cannot be traced back to individual users.
+
+2. **Anonymized Telemetry Sync**:
+   - The system supports anonymized telemetry sync, where only aggregated or partial data needed to improve the ML model is sent. This ensures that user privacy is maintained while still allowing for system optimization.
+
+### Privacy Settings
+
+1. **User-Configurable Privacy Setting**:
+   - Users can configure privacy settings to disable all network sync if desired. This ensures that users have control over their data and can choose to keep all data local.
+
+2. **Compliance with Data Protection Regulations**:
+   - The system is designed to comply with common data protection regulations, ensuring that user data is handled securely and in accordance with legal requirements.

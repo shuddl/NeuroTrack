@@ -1,6 +1,9 @@
 const tf = require('@tensorflow/tfjs-node');
 const fs = require('fs');
 const path = require('path');
+const express = require('express');
+const bodyParser = require('body-parser');
+const crypto = require('crypto');
 
 class RingBuffer {
   constructor(size) {
@@ -25,6 +28,7 @@ class DataAndMLPipeline {
     this.model = null;
     this.dataBuffer = new RingBuffer(100);
     this.loadModel();
+    this.setupAPI();
   }
 
   async loadModel() {
@@ -56,6 +60,38 @@ class DataAndMLPipeline {
 
   async getRealTimePrediction(data) {
     await this.performInference(data);
+  }
+
+  setupAPI() {
+    const app = express();
+    app.use(bodyParser.json());
+
+    app.post('/pushData', (req, res) => {
+      const data = req.body;
+      const anonymizedData = this.anonymizeData(data);
+      this.dataBuffer.push(anonymizedData);
+      res.status(200).send('Data received');
+    });
+
+    app.get('/pullData', (req, res) => {
+      const data = this.dataBuffer.getItems();
+      res.status(200).json(data);
+    });
+
+    app.listen(3000, () => {
+      console.log('API server running on port 3000');
+    });
+  }
+
+  anonymizeData(data) {
+    return {
+      ...data,
+      userId: crypto.createHash('sha256').update(data.userId).digest('hex')
+    };
+  }
+
+  logSyncFailure(error) {
+    console.error('Sync failure:', error);
   }
 }
 

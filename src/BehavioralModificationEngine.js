@@ -1,4 +1,5 @@
 const BehavioralEventsDAO = require('./BehavioralEventsDAO');
+const crypto = require('crypto');
 
 class RingBuffer {
   constructor(size) {
@@ -81,6 +82,14 @@ class BehavioralModificationEngine {
         v = c === 'x' ? r : (r & 0x3) | 0x8;
       return v.toString(16);
     });
+  }
+
+  anonymizeUserID(userID) {
+    return crypto.createHash('sha256').update(userID).digest('hex');
+  }
+
+  logSyncFailure(error) {
+    console.error('Sync failure:', error);
   }
 }
 

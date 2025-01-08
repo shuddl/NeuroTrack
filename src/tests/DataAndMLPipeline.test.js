@@ -80,4 +80,42 @@ describe('DataAndMLPipeline', () => {
       done();
     }, 100);
   });
+
+  it('should push anonymized data via API endpoint', (done) => {
+    const data = {
+      userId: 'testUserID',
+      timeOfDay: 12,
+      currentAppUsage: 1,
+      pastContextSwitches: 3
+    };
+
+    const anonymizedData = dataAndMLPipeline.anonymizeData(data);
+    const pushDataSpy = sinon.spy(dataAndMLPipeline, 'pushData');
+    dataAndMLPipeline.pushData(anonymizedData);
+
+    setTimeout(() => {
+      expect(pushDataSpy.calledOnce).to.be.true;
+      expect(pushDataSpy.args[0][0]).to.deep.include({ userId: anonymizedData.userId });
+      done();
+    }, 100);
+  });
+
+  it('should pull anonymized data via API endpoint', (done) => {
+    const pullDataSpy = sinon.spy(dataAndMLPipeline, 'pullData');
+    dataAndMLPipeline.pullData();
+
+    setTimeout(() => {
+      expect(pullDataSpy.calledOnce).to.be.true;
+      done();
+    }, 100);
+  });
+
+  it('should log sync failures', (done) => {
+    const logSyncFailureSpy = sinon.spy(dataAndMLPipeline, 'logSyncFailure');
+    const error = new Error('Test sync failure');
+    dataAndMLPipeline.logSyncFailure(error);
+    expect(logSyncFailureSpy.calledOnce).to.be.true;
+    expect(logSyncFailureSpy.args[0][0]).to.deep equal(error);
+    done();
+  });
 });

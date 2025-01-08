@@ -25,6 +25,7 @@ class AlwaysOnTopUI {
     this.dataBuffer = new RingBuffer(100);
     this.createWindow();
     this.setupEventListeners();
+    this.privacySetting = false; // Default privacy setting to disable network sync
   }
 
   createWindow() {
@@ -60,6 +61,11 @@ class AlwaysOnTopUI {
 
     ipcMain.on('dismissPrompt', (event, data) => {
       console.log('Prompt dismissed:', data);
+    });
+
+    ipcMain.on('togglePrivacySetting', (event, setting) => {
+      this.privacySetting = setting;
+      console.log('Privacy setting updated:', this.privacySetting);
     });
   }
 

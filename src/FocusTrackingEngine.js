@@ -3,6 +3,10 @@ const WindowsFocusTracker = require('./platforms/WindowsFocusTracker');
 const MacOSFocusTracker = require('./platforms/MacOSFocusTracker');
 const LinuxFocusTracker = require('./platforms/LinuxFocusTracker');
 const { v4: uuidv4 } = require('uuid');
+const crypto = require('crypto');
+const fs = require('fs');
+const path = require('path');
+const { execSync } = require('child_process');
 
 class FocusTrackingEngine extends EventEmitter {
   constructor(eventBus) {
@@ -18,6 +22,9 @@ class FocusTrackingEngine extends EventEmitter {
     this.platformTracker.on('idleChange', this.handleIdleChange.bind(this));
 
     this.startIdleCheck();
+
+    this.encryptionKey = this.loadOrGenerateKey();
+    this.signKernelModules();
   }
 
   getPlatformTracker() {
@@ -43,7 +50,8 @@ class FocusTrackingEngine extends EventEmitter {
         applicationName: data.activeWindow,
         userState: this.currentState
       };
-      this.eventBus.publish('focusChange', eventData);
+      const encryptedEventData = this.encryptData(eventData);
+      this.eventBus.publish('focusChange', encryptedEventData);
     }
   }
 
@@ -57,7 +65,8 @@ class FocusTrackingEngine extends EventEmitter {
           applicationName: data.activeWindow || 'Unknown',
           userState: this.currentState
         };
-        this.eventBus.publish('idleChange', eventData);
+        const encryptedEventData = this.encryptData(eventData);
+        this.eventBus.publish('idleChange', encryptedEventData);
       }
     }
   }
@@ -77,6 +86,40 @@ class FocusTrackingEngine extends EventEmitter {
       clearTimeout(this.idleCheckTimeout);
       this.idleCheckTimeout = null;
     }
+  }
+
+  encryptData(data) {
+    const cipher = crypto.createCipheriv('aes-256-cbc', this.encryptionKey, this.generateIV());
+    let encrypted = cipher.update(JSON.stringify(data), 'utf8', 'hex');
+    encrypted += cipher.final('hex');
+    return encrypted;
+  }
+
+  generateIV() {
+    return crypto.randomBytes(16);
+  }
+
+  loadOrGenerateKey() {
+    const keyPath = path.join(__dirname, 'encryptionKey');
+    if (fs.existsSync(keyPath)) {
+      return fs.readFileSync(keyPath);
+    } else {
+      const key = crypto.randomBytes(32);
+      fs.writeFileSync(keyPath, key);
+      return key;
+    }
+  }
+
+  signKernelModules() {
+    const kernelModules = ['module1.ko', 'module2.ko']; // Example kernel modules
+    kernelModules.forEach(module => {
+      const modulePath = path.join(__dirname, 'kernel_modules', module);
+      const signature = crypto.createSign('SHA256');
+      signature.update(fs.readFileSync(modulePath));
+      const privateKey = fs.readFileSync(path.join(__dirname, 'private_key.pem'));
+      const signedModule = signature.sign(privateKey, 'hex');
+      fs.writeFileSync(`${modulePath}.sig`, signedModule);
+    });
   }
 }
 
