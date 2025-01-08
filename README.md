@@ -414,3 +414,28 @@ While the NeuroTrack application aims to provide a comprehensive solution for co
    Although the application follows strict privacy guidelines, there may still be concerns regarding data collection and storage. Providing clear privacy controls and transparency to users is essential.
 
 By addressing these design flaws and continuously improving the application, the NeuroTrack team can ensure a robust and effective solution for cognitive enhancement and behavioral modification.
+
+## Security & Privacy: Best Practices for Personal Use
+
+To ensure the security and privacy of your data while using the NeuroTrack application, follow these best practices:
+
+1. **Encryption at Rest**:
+   Implement minimal encryption at rest to protect your data. You can use tools like `sqlite3` with encryption extensions or other database encryption methods. Ensure that your database records are encrypted with a user-supplied passphrase.
+
+2. **Managing Secrets**:
+   Use environment variables to manage secrets and sensitive information. Create a `.env` file in the root directory of your project and add your secrets there. Use a library like `dotenv` to load these variables into your application. For example:
+   ```bash
+   # .env file
+   DB_PASS=your_database_password
+   ```
+
+3. **Privacy Considerations**:
+   The data collected by the NeuroTrack application is stored locally on your machine. If you want to purge your data, you can delete the local database files. Ensure that you have backups of any important data before purging.
+
+4. **Regular Updates**:
+   Keep your NeuroTrack application and dependencies up to date to ensure that you have the latest security patches and improvements.
+
+5. **User Control**:
+   Provide clear privacy controls and transparency to users. Allow users to export or delete their data at any time.
+
+By following these best practices, you can ensure the security and privacy of your data while using the NeuroTrack application.
