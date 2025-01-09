@@ -303,6 +303,29 @@ To manually toggle between the `goalFocusTime` and `nonGoalFocusTime` timers, fo
 5. **Daily Totals**:
    The application will automatically store the daily totals of the timers at the end of each day.
 
+## Usage Instructions for Toggling Goal and Non-Goal Focus
+
+To manually toggle between goal and non-goal focus, follow these steps:
+
+1. **Open the Application**:
+   Start the application by running the following command:
+   ```bash
+   npm start
+   ```
+
+2. **Access the Timer Interface**:
+   The application will open a window displaying the timer interface.
+
+3. **Toggle Focus**:
+   - Click the "Goal" button to start the goal focus. This will pause the non-goal focus if it is running.
+   - Click the "Non-Goal" button to start the non-goal focus. This will pause the goal focus if it is running.
+
+4. **View Timer Value**:
+   The interface will display the current value of the timer.
+
+5. **Daily Totals**:
+   The application will automatically store the daily totals of the focus times at the end of each day.
+
 ## Getting Started on macOS
 
 To get started with NeuroTrack on macOS, follow these steps:
@@ -330,15 +353,15 @@ To get started with NeuroTrack on macOS, follow these steps:
 
    This confirms that the event bus is working and the application has started successfully.
 
-5. **Toggle Timers**:
-   - Click the "Goal" button to start the `goalFocusTime` timer. This will pause the `nonGoalFocusTime` timer if it is running.
-   - Click the "Non-Goal" button to start the `nonGoalFocusTime` timer. This will pause the `goalFocusTime` timer if it is running.
+5. **Toggle Focus**:
+   - Click the "Goal" button to start the goal focus. This will pause the non-goal focus if it is running.
+   - Click the "Non-Goal" button to start the non-goal focus. This will pause the goal focus if it is running.
 
-6. **View Timer Values**:
-   The interface will display the current values of the `goalFocusTime` and `nonGoalFocusTime` timers.
+6. **View Timer Value**:
+   The interface will display the current value of the timer.
 
 7. **Daily Totals**:
-   The application will automatically store the daily totals of the timers at the end of each day.
+   The application will automatically store the daily totals of the focus times at the end of each day.
 
 ## Disclaimers
 
