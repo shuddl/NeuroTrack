@@ -52,6 +52,41 @@ class BehavioralEventsDAO {
       });
     });
   }
+
+  static queryContextSwitchEvents() {
+    const sql = `
+      SELECT * FROM behavioral_events
+      WHERE event_type = 'contextSwitch'
+      ORDER BY timestamp DESC
+    `;
+    return new Promise((resolve, reject) => {
+      db.all(sql, (err, rows) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(rows);
+        }
+      });
+    });
+  }
+
+  static analyzeContextSwitchFrequencyAndDuration() {
+    return new Promise((resolve, reject) => {
+      this.queryContextSwitchEvents()
+        .then((events) => {
+          const frequency = events.length;
+          const duration = events.reduce((acc, curr, index, arr) => {
+            if (index === 0) return acc;
+            return acc + (new Date(curr.timestamp) - new Date(arr[index - 1].timestamp));
+          }, 0) / frequency;
+
+          resolve({ frequency, duration });
+        })
+        .catch((err) => {
+          reject(err);
+        });
+    });
+  }
 }
 
 module.exports = BehavioralEventsDAO;

@@ -118,4 +118,29 @@ describe('DataAndMLPipeline', () => {
     expect(logSyncFailureSpy.args[0][0]).to.deep equal(error);
     done();
   });
+
+  it('should implement real-time feedback loop in performInference method', async () => {
+    const data = {
+      timeOfDay: 12,
+      currentAppUsage: 1,
+      pastContextSwitches: 3
+    };
+    const publishSpy = sinon.spy(eventBus, 'publish');
+    await dataAndMLPipeline.performInference(data);
+    expect(publishSpy.calledWith('modelPrediction')).to.be.true;
+  });
+
+  it('should publish and subscribe to events related to user behavior and model predictions using eventBus', (done) => {
+    const userBehaviorSpy = sinon.spy(dataAndMLPipeline, 'handleUserBehavior');
+    const modelPredictionSpy = sinon.spy(dataAndMLPipeline, 'handleModelPrediction');
+
+    eventBus.publish('userBehavior', { behavior: 'test' });
+    eventBus.publish('modelPrediction', { prediction: 'test' });
+
+    setTimeout(() => {
+      expect(userBehaviorSpy.calledOnce).to.be.true;
+      expect(modelPredictionSpy.calledOnce).to.be.true;
+      done();
+    }, 100);
+  });
 });

@@ -96,4 +96,35 @@ describe('FocusTrackingEngine', () => {
     expect(records).to.have.lengthOf(1);
     expect(records[0]).to.include({ application, state });
   });
+
+  it('should track context switches between applications using trackContextSwitch method', (done) => {
+    const contextSwitchSpy = sinon.spy();
+    eventBus.subscribe('contextSwitch', contextSwitchSpy);
+
+    // Simulate context switch
+    focusTrackingEngine.handleFocusChange({ activeWindow: 'App1' });
+    focusTrackingEngine.handleFocusChange({ activeWindow: 'App2' });
+
+    setTimeout(() => {
+      expect(contextSwitchSpy.calledTwice).to.be.true;
+      expect(contextSwitchSpy.args[0][0]).to.deep.include({ state: 'Work Focus', activeWindow: 'App1' });
+      expect(contextSwitchSpy.args[1][0]).to.deep.include({ state: 'Work Focus', activeWindow: 'App2' });
+      done();
+    }, 100);
+  });
+
+  it('should monitor idle time using checkIdleTime method in platform-specific focus trackers', (done) => {
+    const idleChangeSpy = sinon.spy();
+    eventBus.subscribe('idleChange', idleChangeSpy);
+
+    // Simulate idle time
+    focusTrackingEngine.lastActivityTime = Date.now() - focusTrackingEngine.idleThreshold - 1000;
+    focusTrackingEngine.checkIdleTime();
+
+    setTimeout(() => {
+      expect(idleChangeSpy.calledOnce).to.be.true;
+      expect(idleChangeSpy.args[0][0]).to.deep.include({ state: 'Break/Leisure' });
+      done();
+    }, 100);
+  });
 });

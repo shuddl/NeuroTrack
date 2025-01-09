@@ -53,4 +53,26 @@ describe('CognitiveEnhancementModule', () => {
     expect(records).to.have.lengthOf(1);
     expect(records[0]).to.include({ event_type: 'SkippedBreak' });
   });
+
+  it('should implement personalized break schedules based on user behavior and preferences', () => {
+    const userPreferences = {
+      breakInterval: 20 * 60 * 1000, // 20 minutes
+      breakDuration: 10 * 60 * 1000 // 10 minutes
+    };
+
+    cognitiveEnhancementModule.implementPersonalizedBreakSchedules(userPreferences);
+
+    expect(cognitiveEnhancementModule.breakInterval).to.equal(userPreferences.breakInterval);
+    expect(cognitiveEnhancementModule.breakDuration).to.equal(userPreferences.breakDuration);
+  });
+
+  it('should adjust break intervals dynamically based on real-time user data and feedback', () => {
+    const realTimeData = {
+      productivityLevel: 0.4
+    };
+
+    cognitiveEnhancementModule.adjustBreakIntervalsDynamically(realTimeData);
+
+    expect(cognitiveEnhancementModule.breakInterval).to.be.lessThan(25 * 60 * 1000); // Less than 25 minutes
+  });
 });
