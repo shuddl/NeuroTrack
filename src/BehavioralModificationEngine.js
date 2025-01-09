@@ -2,6 +2,7 @@ const { EventEmitter } = require('eventemitter3');
 const BehavioralEventsDAO = require('../dao/BehavioralEventsDAO');
 const { v4: uuidv4 } = require('uuid');
 const crypto = require('crypto');
+const DataAndMLPipeline = require('./DataAndMLPipeline');
 
 class BehavioralModificationEngine extends EventEmitter {
   constructor(eventBus, timerManager) {
@@ -13,6 +14,7 @@ class BehavioralModificationEngine extends EventEmitter {
     this.sustainedFocusThreshold = 25 * 60; // 25 minutes in seconds
     this.contextSwitchThreshold = 5; // Example threshold for context switches
     this.behavioralEventsDAO = new BehavioralEventsDAO();
+    this.dataAndMLPipeline = new DataAndMLPipeline(eventBus);
 
     this.eventBus.subscribe('focusChange', this.trackFocusEvent.bind(this));
     this.eventBus.subscribe('idleChange', this.trackContextSwitch.bind(this));
@@ -59,6 +61,33 @@ class BehavioralModificationEngine extends EventEmitter {
     if (this.contextSwitches.getItems().length >= this.contextSwitchThreshold) {
       this.triggerProductivityDegradationEvent();
     }
+
+    // Analyze frequency and duration of context switches
+    this.analyzeContextSwitches();
+
+    // Predict distraction probabilities based on application usage patterns
+    this.predictDistractionProbabilities(data);
+  }
+
+  async analyzeContextSwitches() {
+    const contextSwitches = this.contextSwitches.getItems();
+    const frequency = contextSwitches.length;
+    const duration = contextSwitches.reduce((acc, curr, index, arr) => {
+      if (index === 0) return acc;
+      return acc + (new Date(curr.timestamp) - new Date(arr[index - 1].timestamp));
+    }, 0) / frequency;
+
+    console.log(`Context Switch Frequency: ${frequency}, Duration: ${duration}`);
+  }
+
+  async predictDistractionProbabilities(data) {
+    const predictionData = {
+      timeOfDay: new Date().getHours(),
+      currentAppUsage: data.activeWindow,
+      pastContextSwitches: this.contextSwitches.getItems().length
+    };
+
+    await this.dataAndMLPipeline.performInference(predictionData);
   }
 
   async checkGoalFocusTime(goalFocusTime) {

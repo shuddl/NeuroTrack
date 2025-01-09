@@ -5,6 +5,8 @@ class DataAndMLPipeline {
     this.eventBus = eventBus;
     this.model = null;
     this.loadModel();
+    this.eventBus.subscribe('userBehavior', this.handleUserBehavior.bind(this));
+    this.eventBus.subscribe('modelPrediction', this.handleModelPrediction.bind(this));
   }
 
   async loadModel() {
@@ -33,6 +35,9 @@ class DataAndMLPipeline {
     const prediction = this.model.predict(preprocessedData);
     const distractionProbability = prediction.dataSync()[0];
     this.eventBus.publish('distractionProbabilityUpdated', { distractionProbability });
+
+    // Real-time feedback loop
+    this.eventBus.publish('modelPrediction', { data, distractionProbability });
   }
 
   async replaceOrRetrainModel(newData, newLabels) {
@@ -40,6 +45,16 @@ class DataAndMLPipeline {
     const ys = tf.tensor2d(newLabels);
     await this.model.fit(xs, ys, { epochs: 10 });
     await this.model.save('file://path/to/model.json');
+  }
+
+  handleUserBehavior(data) {
+    // Handle user behavior event
+    console.log('User behavior event received:', data);
+  }
+
+  handleModelPrediction(data) {
+    // Handle model prediction event
+    console.log('Model prediction event received:', data);
   }
 }
 

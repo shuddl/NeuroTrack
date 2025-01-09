@@ -269,4 +269,55 @@ describe('BehavioralModificationEngine', () => {
       done();
     }, 400);
   });
+
+  it('should analyze frequency and duration of context switches', (done) => {
+    const contextSwitchEvent = {
+      recordId: '1',
+      timestamp: new Date().toISOString(),
+      applicationName: 'TestApp',
+      userState: 'IDLE'
+    };
+
+    for (let i = 0; i < 6; i++) {
+      eventBus.publish('idleChange', contextSwitchEvent);
+    }
+
+    setTimeout(() => {
+      const contextSwitches = behavioralModificationEngine.contextSwitches.getItems();
+      const frequency = contextSwitches.length;
+      const duration = contextSwitches.reduce((acc, curr, index, arr) => {
+        if (index === 0) return acc;
+        return acc + (new Date(curr.timestamp) - new Date(arr[index - 1].timestamp));
+      }, 0) / frequency;
+
+      expect(frequency).to.equal(6);
+      expect(duration).to.be.a('number');
+      done();
+    }, 100);
+  });
+
+  it('should predict distraction probabilities using DataAndMLPipeline', (done) => {
+    const contextSwitchEvent = {
+      recordId: '1',
+      timestamp: new Date().toISOString(),
+      applicationName: 'TestApp',
+      userState: 'IDLE'
+    };
+
+    for (let i = 0; i < 6; i++) {
+      eventBus.publish('idleChange', contextSwitchEvent);
+    }
+
+    setTimeout(async () => {
+      const predictionData = {
+        timeOfDay: new Date().getHours(),
+        currentAppUsage: contextSwitchEvent.applicationName,
+        pastContextSwitches: behavioralModificationEngine.contextSwitches.getItems().length
+      };
+
+      const distractionProbability = await behavioralModificationEngine.dataAndMLPipeline.performInference(predictionData);
+      expect(distractionProbability).to.be.a('number');
+      done();
+    }, 100);
+  });
 });
