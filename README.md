@@ -257,19 +257,22 @@ Adhering to these design principles guarantees a system that not only measures p
 
 To confirm that the event bus is working, follow these steps:
 
-1. **Install Dependencies**:
+1. **Install Node.js**:
+   If you don't have Node.js installed, download and install it from [Node.js official website](https://nodejs.org/).
+
+2. **Install Dependencies**:
    Ensure you have Node.js installed. Then, run the following command in the root directory of the project to install the necessary dependencies:
    ```bash
    npm install
    ```
 
-2. **Run the Application**:
+3. **Run the Application**:
    Execute the following command to start the application:
    ```bash
    npm start
    ```
 
-3. **Check the Output**:
+4. **Check the Output**:
    You should see the following output in the console:
    ```
    Hello World
