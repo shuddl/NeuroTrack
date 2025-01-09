@@ -302,3 +302,56 @@ To manually toggle between the `goalFocusTime` and `nonGoalFocusTime` timers, fo
 
 5. **Daily Totals**:
    The application will automatically store the daily totals of the timers at the end of each day.
+
+## Getting Started on macOS
+
+To get started with NeuroTrack on macOS, follow these steps:
+
+1. **Install Node.js**:
+   If you don't have Node.js installed, download and install it from [Node.js official website](https://nodejs.org/).
+
+2. **Install Dependencies**:
+   Ensure you have Node.js installed. Then, run the following command in the root directory of the project to install the necessary dependencies:
+   ```bash
+   npm install
+   ```
+
+3. **Run the Application**:
+   Execute the following command to start the application:
+   ```bash
+   npm start
+   ```
+
+4. **Check the Output**:
+   You should see the following output in the console:
+   ```
+   Hello World
+   ```
+
+   This confirms that the event bus is working and the application has started successfully.
+
+5. **Toggle Timers**:
+   - Click the "Goal" button to start the `goalFocusTime` timer. This will pause the `nonGoalFocusTime` timer if it is running.
+   - Click the "Non-Goal" button to start the `nonGoalFocusTime` timer. This will pause the `goalFocusTime` timer if it is running.
+
+6. **View Timer Values**:
+   The interface will display the current values of the `goalFocusTime` and `nonGoalFocusTime` timers.
+
+7. **Daily Totals**:
+   The application will automatically store the daily totals of the timers at the end of each day.
+
+## Disclaimers
+
+- **Platform Differences**:
+  - The application has been tested on macOS, Windows, and Linux. However, there may be minor differences in behavior and performance across different platforms.
+  - Some advanced features may not be fully supported on older versions of macOS. If you encounter any issues, please refer to the fallback instructions provided in the documentation.
+
+- **Performance Checks**:
+  - The application is designed to ensure CPU usage remains below 5% and memory usage below 300MB under normal conditions. If you experience higher resource usage, please check for any background processes or applications that may be affecting performance.
+
+- **Privacy and Security**:
+  - NeuroTrack prioritizes user privacy and security. All data is stored locally and encrypted. Optional cloud sync is available for multi-device usage and enterprise integration scenarios.
+  - Users have full control over their data and can purge or export it at any time.
+
+- **Support**:
+  - For any issues or questions, please refer to the support section in the documentation or contact our support team.
