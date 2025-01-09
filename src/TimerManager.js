@@ -8,6 +8,7 @@ class TimerManager {
     this.nonGoalFocusTime = 0;
     this.currentFocusType = null;
     this.timerInterval = null;
+    this.resetTimersAtMidnight();
   }
 
   async initializeDatabase() {
@@ -55,6 +56,18 @@ class TimerManager {
       goalFocusTime: this.goalFocusTime,
       nonGoalFocusTime: this.nonGoalFocusTime
     });
+  }
+
+  resetTimersAtMidnight() {
+    const now = new Date();
+    const nextMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+    const timeUntilMidnight = nextMidnight - now;
+    setTimeout(() => {
+      this.goalFocusTime = 0;
+      this.nonGoalFocusTime = 0;
+      this.emitTimeUpdate();
+      this.resetTimersAtMidnight();
+    }, timeUntilMidnight);
   }
 }
 
