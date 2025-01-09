@@ -7,6 +7,12 @@ const DataAndMLPipeline = require('./DataAndMLPipeline');
 class BehavioralModificationEngine extends EventEmitter {
   constructor(eventBus, timerManager) {
     super();
+    if (!eventBus) {
+      throw new Error('eventBus is required');
+    }
+    if (!timerManager) {
+      throw new Error('timerManager is required');
+    }
     this.eventBus = eventBus;
     this.timerManager = timerManager;
     this.focusIntervals = new RingBuffer(100);
