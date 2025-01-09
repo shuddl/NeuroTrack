@@ -1,105 +1,47 @@
 const { expect } = require('chai');
-const sqlite3 = require('sqlite3').verbose();
-const FocusRecordsDAO = require('../FocusRecordsDAO');
+const db = require('../db/connection');
+const FocusRecordsDAO = require('../dao/FocusRecordsDAO');
 
 describe('FocusRecordsDAO', () => {
-  let dao;
-
-  beforeEach(() => {
-    dao = new FocusRecordsDAO();
+  beforeEach(async () => {
+    await FocusRecordsDAO.createTable();
   });
 
-  it('should add a new record', (done) => {
-    const record = {
-      recordId: '1',
-      timestamp: new Date().toISOString(),
-      applicationName: 'TestApp',
-      userState: 'FOCUS',
-      duration: 120
-    };
-
-    dao.addRecord(record);
-
-    dao.queryRecords((err, rows) => {
-      expect(err).to.be.null;
-      expect(rows).to.have.lengthOf(1);
-      expect(rows[0]).to.deep.include(record);
-      done();
+  afterEach(async () => {
+    await new Promise((resolve, reject) => {
+      db.run('DELETE FROM focus_records', (err) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve();
+        }
+      });
     });
   });
 
-  it('should update an existing record', (done) => {
-    const record = {
-      recordId: '1',
-      timestamp: new Date().toISOString(),
-      applicationName: 'TestApp',
-      userState: 'FOCUS',
-      duration: 120
-    };
+  it('should add a new record', async () => {
+    const application = 'TestApp';
+    const state = 'FOCUS';
 
-    dao.addRecord(record);
+    const recordId = await FocusRecordsDAO.insertRecord(application, state);
 
-    const updatedRecord = {
-      ...record,
-      applicationName: 'UpdatedApp',
-      duration: 150
-    };
-
-    dao.updateRecord(updatedRecord);
-
-    dao.queryRecords((err, rows) => {
-      expect(err).to.be.null;
-      expect(rows).to.have.lengthOf(1);
-      expect(rows[0]).to.deep.include(updatedRecord);
-      done();
-    });
+    const records = await FocusRecordsDAO.queryRecords();
+    expect(records).to.have.lengthOf(1);
+    expect(records[0]).to.include({ application, state });
   });
 
-  it('should delete a record', (done) => {
-    const record = {
-      recordId: '1',
-      timestamp: new Date().toISOString(),
-      applicationName: 'TestApp',
-      userState: 'FOCUS',
-      duration: 120
-    };
+  it('should query records', async () => {
+    const application1 = 'TestApp1';
+    const state1 = 'FOCUS';
+    const application2 = 'TestApp2';
+    const state2 = 'IDLE';
 
-    dao.addRecord(record);
-    dao.deleteRecord(record.recordId);
+    await FocusRecordsDAO.insertRecord(application1, state1);
+    await FocusRecordsDAO.insertRecord(application2, state2);
 
-    dao.queryRecords((err, rows) => {
-      expect(err).to.be.null;
-      expect(rows).to.have.lengthOf(0);
-      done();
-    });
-  });
-
-  it('should handle partial records when user switches states mid-tracking', (done) => {
-    const record1 = {
-      recordId: '1',
-      timestamp: new Date().toISOString(),
-      applicationName: 'TestApp',
-      userState: 'FOCUS',
-      duration: 60
-    };
-
-    const record2 = {
-      recordId: '2',
-      timestamp: new Date().toISOString(),
-      applicationName: 'TestApp',
-      userState: 'BREAK',
-      duration: 30
-    };
-
-    dao.addRecord(record1);
-    dao.addRecord(record2);
-
-    dao.queryRecords((err, rows) => {
-      expect(err).to.be.null;
-      expect(rows).to.have.lengthOf(2);
-      expect(rows[0]).to.deep.include(record1);
-      expect(rows[1]).to.deep.include(record2);
-      done();
-    });
+    const records = await FocusRecordsDAO.queryRecords();
+    expect(records).to.have.lengthOf(2);
+    expect(records[0]).to.include({ application: application2, state: state2 });
+    expect(records[1]).to.include({ application: application1, state: state1 });
   });
 });

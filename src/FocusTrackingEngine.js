@@ -2,7 +2,11 @@ const { EventEmitter } = require('eventemitter3');
 const WindowsFocusTracker = require('./platforms/WindowsFocusTracker');
 const MacOSFocusTracker = require('./platforms/MacOSFocusTracker');
 const LinuxFocusTracker = require('./platforms/LinuxFocusTracker');
-
+const FocusRecordsDAO = require('../dao/FocusRecordsDAO');
+const { v4: uuidv4 } = require('uuid');
+const crypto = require('crypto');
+const path = require('path');
+const fs = require('fs');
 
 class FocusTrackingEngine extends EventEmitter {
   constructor(eventBus) {
@@ -19,6 +23,7 @@ class FocusTrackingEngine extends EventEmitter {
 
     this.startIdleCheck();
 
+    this.encryptionKey = this.loadOrGenerateKey();
   }
 
   getPlatformTracker() {
