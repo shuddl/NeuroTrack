@@ -22,6 +22,14 @@
         <button id="accept-break">Accept Break</button>
         <button id="skip-break">Skip Break</button>
     </div>
+    <div id="reward-notification">
+        <h2>Reward Notification</h2>
+        <p id="reward-message">You've earned a reward!</p>
+    </div>
+    <div id="context-switch-alert">
+        <h2>Context Switch Alert</h2>
+        <p id="context-switch-message">You've switched contexts frequently. Consider refocusing.</p>
+    </div>
     <script src="preload.js"></script>
     <script>
         const goalTimeElement = document.getElementById('goal-time');
@@ -30,6 +38,8 @@
         const nonGoalButton = document.getElementById('non-goal-button');
         const acceptBreakButton = document.getElementById('accept-break');
         const skipBreakButton = document.getElementById('skip-break');
+        const rewardNotification = document.getElementById('reward-notification');
+        const contextSwitchAlert = document.getElementById('context-switch-alert');
 
         window.timers.updateTime((time) => {
             goalTimeElement.textContent = new Date(time.goalFocusTime * 1000).toISOString().substr(11, 8);
@@ -50,6 +60,20 @@
 
         skipBreakButton.addEventListener('click', () => {
             window.electron.send('skip-break');
+        });
+
+        window.electron.receive('displayRewardUI', () => {
+            rewardNotification.style.display = 'block';
+            setTimeout(() => {
+                rewardNotification.style.display = 'none';
+            }, 5000);
+        });
+
+        window.electron.receive('contextSwitchAlert', () => {
+            contextSwitchAlert.style.display = 'block';
+            setTimeout(() => {
+                contextSwitchAlert.style.display = 'none';
+            }, 5000);
         });
     </script>
 </body>

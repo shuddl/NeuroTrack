@@ -56,10 +56,6 @@ eventBus.subscribe('RewardEvent', (data) => {
   console.log('Reward Event:', data);
 });
 
-eventBus.subscribe('productivityDegradation', (data) => {
-  console.log('Productivity Degradation Event:', data);
-});
-
 // Subscribe to events from CognitiveEnhancementModule and log them to the console
 eventBus.subscribe('NeuralPatternDisruptor', (data) => {
   console.log('Neural Pattern Disruptor Event:', data);

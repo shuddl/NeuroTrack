@@ -4,7 +4,7 @@ Below is an end-to-end system architecture proposal, deliberately engineered for
 1. SYSTEM OVERVIEW
 
 ┌──────────────────────────────────────────────────────────┐
-│                    Always-On-Top UI                     │
+│                    Main App UI                           │
 │          (Hardware-Accelerated, Behaviorally            │
 │           Optimized for Cognitive Load)                 │
 └──────────────────────────────────────────────────────────┘
@@ -34,7 +34,7 @@ Below is an end-to-end system architecture proposal, deliberately engineered for
            │ (Local-First DB + Optional Cloud Sync)   │
            └───────────────────────────────────────────┘
 
-	•	Always-On-Top UI: Serves as the real-time lens into the user’s state, tasks, and micro-prompts. Uses hardware-accelerated rendering to ensure minimal CPU overhead and fluid interactivity.
+	•	Main App UI: Serves as the real-time lens into the user’s state, tasks, and micro-prompts. Uses hardware-accelerated rendering to ensure minimal CPU overhead and fluid interactivity.
 	•	Event Bus: Centralizes system communication in an event-driven manner. Every subsystem publishes/consumes events ensuring modularity and maintainability.
 	•	Focus Tracking Engine: Operates at the kernel level to capture system-wide events (window switches, keyboard/mouse usage, idle detection). Cross-application focus detection for precise measurement of user context.
 	•	Behavioral Modification Engine: Houses micro-reward logic, pattern recognition, and predictive distraction modeling. Integrates with the Focus Tracking Engine to provide micro-interventions and real-time adjustments.
@@ -53,13 +53,13 @@ Below is an end-to-end system architecture proposal, deliberately engineered for
 2.2 Behavioral Triggers & Micro-Rewards
 	1.	The Behavioral Modification Engine subscribes to time-series updates.
 	2.	When a threshold is hit (e.g., 25 minutes of uninterrupted focus), the engine emits a “micro-reward” event.
-	3.	The Always-On-Top UI receives the event and shows a reward notification or prompt, engineered with neuropsychology-based color highlights to maximize positive reinforcement.
+	3.	The Main App UI receives the event and shows a reward notification or prompt, engineered with neuropsychology-based color highlights to maximize positive reinforcement.
 	4.	Data about the reward event is recorded back in the local DB for analytics.
 
 2.3 Predictive Distraction Modeling
 	1.	The ML Pipeline runs in the background to continuously update a user’s “distraction probability” based on historical usage patterns (time of day, application usage, context switching frequency).
 	2.	When the predicted probability exceeds a configurable threshold, the system triggers a “preventive nudge” event.
-	3.	The Always-On-Top UI interrupts the user with a subtle prompt or visual shift, momentarily disrupting the distraction pattern.
+	3.	The Main App UI interrupts the user with a subtle prompt or visual shift, momentarily disrupting the distraction pattern.
 
 2.4 Flow State Optimization
 	1.	A separate thread in the Cognitive Enhancement Module monitors time-in-focus.
@@ -112,7 +112,7 @@ Below is an end-to-end system architecture proposal, deliberately engineered for
 	•	Updated inference models can be pulled from the cloud (if allowed) and tested locally.
 	•	Rollback mechanisms for when new model versions degrade local performance.
 
-3.5 Always-On-Top UI
+3.5 Main App UI
 	•	Interface Principles:
 	•	Neuropsychology-Based Color Theory: High-contrast, focus-oriented color palette, avoiding overstimulation.
 	•	Cognitive Load-Optimized Information Density: Real-time time tracking + minimal additional data in a collapsible, context-aware format.
