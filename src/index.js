@@ -5,7 +5,6 @@ const FocusTrackingEngine = require('./FocusTrackingEngine');
 const BehavioralModificationEngine = require('./BehavioralModificationEngine');
 const CognitiveEnhancementModule = require('./CognitiveEnhancementModule');
 const DataAndMLPipeline = require('./DataAndMLPipeline');
-const AlwaysOnTopUI = require('./AlwaysOnTopUI');
 const TimerManager = require('./TimerManager');
 const BehavioralEventsDAO = require('../dao/BehavioralEventsDAO');
 const FocusRecordsDAO = require('../dao/FocusRecordsDAO');
@@ -19,7 +18,6 @@ const focusTrackingEngine = new FocusTrackingEngine(eventBus);
 const behavioralModificationEngine = new BehavioralModificationEngine(eventBus);
 const cognitiveEnhancementModule = new CognitiveEnhancementModule(eventBus);
 const dataAndMLPipeline = new DataAndMLPipeline(eventBus);
-const alwaysOnTopUI = new AlwaysOnTopUI(eventBus);
 const timerManager = new TimerManager();
 
 // Initialize the TimerManager database
