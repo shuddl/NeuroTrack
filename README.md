@@ -279,3 +279,26 @@ To confirm that the event bus is working, follow these steps:
    ```
 
    This confirms that the event bus is working and the application has started successfully.
+
+## Usage Instructions for Toggling Goal and Non-Goal Timers
+
+To manually toggle between the `goalFocusTime` and `nonGoalFocusTime` timers, follow these steps:
+
+1. **Open the Application**:
+   Start the application by running the following command:
+   ```bash
+   npm start
+   ```
+
+2. **Access the Timer Interface**:
+   The application will open a window displaying the timer interface.
+
+3. **Toggle Timers**:
+   - Click the "Goal" button to start the `goalFocusTime` timer. This will pause the `nonGoalFocusTime` timer if it is running.
+   - Click the "Non-Goal" button to start the `nonGoalFocusTime` timer. This will pause the `goalFocusTime` timer if it is running.
+
+4. **View Timer Values**:
+   The interface will display the current values of the `goalFocusTime` and `nonGoalFocusTime` timers.
+
+5. **Daily Totals**:
+   The application will automatically store the daily totals of the timers at the end of each day.
