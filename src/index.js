@@ -6,7 +6,7 @@ const BehavioralModificationEngine = require('./BehavioralModificationEngine');
 const CognitiveEnhancementModule = require('./CognitiveEnhancementModule');
 const DataAndMLPipeline = require('./DataAndMLPipeline');
 const AlwaysOnTopUI = require('./AlwaysOnTopUI');
-const TimerManager = require('./TimerManager'); // P27d7
+const TimerManager = require('./TimerManager');
 
 // Initialize the event bus
 const eventBus = new EventBus();
@@ -17,15 +17,15 @@ const behavioralModificationEngine = new BehavioralModificationEngine(eventBus);
 const cognitiveEnhancementModule = new CognitiveEnhancementModule(eventBus);
 const dataAndMLPipeline = new DataAndMLPipeline(eventBus);
 const alwaysOnTopUI = new AlwaysOnTopUI(eventBus);
-const timerManager = new TimerManager(); // P27d7
+const timerManager = new TimerManager();
 
 // Initialize the TimerManager database
-timerManager.initializeDatabase(); // P27d7
+timerManager.initializeDatabase();
 
 // Subscribe to focus/idle events from FocusTrackingEngine and write them to the local DB using FocusRecordsDAO
 eventBus.subscribe('focusChange', (data) => {
   console.log('Focus Change Event:', data);
-  dataAndMLPipeline.performInference(data); // P227a
+  dataAndMLPipeline.performInference(data);
 });
 
 eventBus.subscribe('idleChange', (data) => {
@@ -33,7 +33,7 @@ eventBus.subscribe('idleChange', (data) => {
   focusRecordsDAO.addRecord(data);
   behavioralModificationEngine.trackFocusEvent(data);
   cognitiveEnhancementModule.detectDeepWorkSessions(data);
-  dataAndMLPipeline.performInference(data); // P227a
+  dataAndMLPipeline.performInference(data);
 });
 
 // Subscribe to reward and degradation events from BehavioralModificationEngine and log them to the console
@@ -66,7 +66,7 @@ eventBus.subscribe('distractionProbabilityUpdated', (data) => {
 // Subscribe to daily session events and trigger the ML pipeline
 eventBus.subscribe('dailySession', (data) => {
   console.log('Daily Session Event:', data);
-  dataAndMLPipeline.handleDailySession(data); // Pa821
+  dataAndMLPipeline.handleDailySession(data);
 });
 
 // Subscribe to break events from CognitiveEnhancementModule
