@@ -1,9 +1,16 @@
 const { expect } = require('chai');
+const fs = require('fs');
+const path = require('path');
 const db = require('../db/connection');
 const FocusRecordsDAO = require('../dao/FocusRecordsDAO');
 
 describe('FocusRecordsDAO', () => {
+  const testDBPath = path.resolve(__dirname, '../data/test_neurotrack.db');
+
   beforeEach(async () => {
+    if (fs.existsSync(testDBPath)) {
+      fs.unlinkSync(testDBPath);
+    }
     await FocusRecordsDAO.createTable();
   });
 

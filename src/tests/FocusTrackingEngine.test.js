@@ -4,12 +4,19 @@ const EventBus = require('../eventBus');
 const FocusTrackingEngine = require('../FocusTrackingEngine');
 const FocusRecordsDAO = require('../dao/FocusRecordsDAO');
 const db = require('../db/connection');
+const path = require('path');
+const fs = require('fs');
 
 describe('FocusTrackingEngine', () => {
   let eventBus;
   let focusTrackingEngine;
 
+  const testDBPath = path.resolve(__dirname, '../data/test_neurotrack.db');
+
   beforeEach(async () => {
+    if (fs.existsSync(testDBPath)) {
+      fs.unlinkSync(testDBPath);
+    }
     eventBus = new EventBus();
     focusTrackingEngine = new FocusTrackingEngine(eventBus);
     await FocusRecordsDAO.createTable();

@@ -443,3 +443,30 @@ To ensure the database is properly set up and initialized, follow these steps:
 
 8. **Daily Totals**:
    The application will automatically store the daily totals of the focus times at the end of each day.
+
+## Instructions for Running `npm test`
+
+To run the tests for the NeuroTrack project, follow these steps:
+
+1. **Install Node.js**:
+   If you don't have Node.js installed, download and install it from [Node.js official website](https://nodejs.org/).
+
+2. **Install Dependencies**:
+   Ensure you have Node.js installed. Then, run the following command in the root directory of the project to install the necessary dependencies:
+   ```bash
+   npm install
+   ```
+
+3. **Run the Tests**:
+   Execute the following command to run the tests:
+   ```bash
+   npm test
+   ```
+
+4. **Check the Output**:
+   Review the output to ensure all tests pass successfully. If there are any known tests that fail on macOS or Windows, they will be marked with a skip or a warning.
+
+## Success Metrics
+
+- All tests pass.
+- Test coverage is over 80%.

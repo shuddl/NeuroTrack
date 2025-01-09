@@ -4,6 +4,9 @@ const EventBus = require('../eventBus');
 const BehavioralModificationEngine = require('../BehavioralModificationEngine');
 const BehavioralEventsDAO = require('../dao/BehavioralEventsDAO');
 const TimerManager = require('../TimerManager');
+const path = require('path');
+const fs = require('fs');
+const db = require('../db/connection');
 
 describe('BehavioralModificationEngine', () => {
   let eventBus;
@@ -11,7 +14,12 @@ describe('BehavioralModificationEngine', () => {
   let behavioralEventsDAO;
   let timerManager;
 
+  const testDBPath = path.resolve(__dirname, '../data/test_neurotrack.db');
+
   beforeEach(async () => {
+    if (fs.existsSync(testDBPath)) {
+      fs.unlinkSync(testDBPath);
+    }
     eventBus = new EventBus();
     timerManager = new TimerManager();
     behavioralModificationEngine = new BehavioralModificationEngine(eventBus, timerManager);
