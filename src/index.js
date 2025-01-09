@@ -1,4 +1,4 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 const EventBus = require('./eventBus');
 const FocusTrackingEngine = require('./FocusTrackingEngine');
@@ -6,7 +6,7 @@ const BehavioralModificationEngine = require('./BehavioralModificationEngine');
 const CognitiveEnhancementModule = require('./CognitiveEnhancementModule');
 const DataAndMLPipeline = require('./DataAndMLPipeline');
 const AlwaysOnTopUI = require('./AlwaysOnTopUI');
-
+const TimerManager = require('./TimerManager'); // P27d7
 
 // Initialize the event bus
 const eventBus = new EventBus();
@@ -17,7 +17,10 @@ const behavioralModificationEngine = new BehavioralModificationEngine(eventBus);
 const cognitiveEnhancementModule = new CognitiveEnhancementModule(eventBus);
 const dataAndMLPipeline = new DataAndMLPipeline(eventBus);
 const alwaysOnTopUI = new AlwaysOnTopUI(eventBus);
+const timerManager = new TimerManager(); // P27d7
 
+// Initialize the TimerManager database
+timerManager.initializeDatabase(); // P27d7
 
 // Subscribe to focus/idle events from FocusTrackingEngine and write them to the local DB using FocusRecordsDAO
 eventBus.subscribe('focusChange', (data) => {
@@ -70,6 +73,34 @@ eventBus.subscribe('BreakScheduled', (data) => {
 eventBus.subscribe('BreakCompliance', (data) => {
   console.log('Break Compliance Event:', data);
 });
+
+// Add event listeners for start-goal-timer and start-non-goal-timer events
+ipcMain.on('start-goal-timer', () => {
+  timerManager.startGoalFocusTimer();
+});
+
+ipcMain.on('start-non-goal-timer', () => {
+  timerManager.startNonGoalFocusTimer();
+});
+
+// Store daily totals at the end of the day
+const storeDailyTotals = () => {
+  const date = new Date().toISOString().split('T')[0];
+  timerManager.storeDailyTotals(date);
+};
+
+// Schedule daily totals storage at midnight
+const scheduleDailyTotalsStorage = () => {
+  const now = new Date();
+  const nextMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+  const timeUntilMidnight = nextMidnight - now;
+  setTimeout(() => {
+    storeDailyTotals();
+    scheduleDailyTotalsStorage();
+  }, timeUntilMidnight);
+};
+
+scheduleDailyTotalsStorage();
 
 // Create a new BrowserWindow and load index.html
 function createWindow() {

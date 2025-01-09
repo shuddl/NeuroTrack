@@ -25,7 +25,7 @@ class TimerManager {
         this.goalFocusTime += 1;
         this.emitGoalTimeUpdate();
       }, 1000);
-      ipcMain.emit('update-goal-time', this.goalFocusTime); // P39b5
+      ipcMain.emit('update-goal-time', this.goalFocusTime);
     }
   }
 
@@ -44,7 +44,7 @@ class TimerManager {
         this.nonGoalFocusTime += 1;
         this.emitNonGoalTimeUpdate();
       }, 1000);
-      ipcMain.emit('update-non-goal-time', this.nonGoalFocusTime); // P39b5
+      ipcMain.emit('update-non-goal-time', this.nonGoalFocusTime);
     }
   }
 
