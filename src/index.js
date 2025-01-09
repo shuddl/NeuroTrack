@@ -87,6 +87,7 @@ function createWindow() {
 // Bootstrap the application
 app.whenReady().then(() => {
   createWindow();
+  console.log('Hello World'); // Log 'Hello World' to the console on app start
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
