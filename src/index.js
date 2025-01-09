@@ -7,6 +7,9 @@ const CognitiveEnhancementModule = require('./CognitiveEnhancementModule');
 const DataAndMLPipeline = require('./DataAndMLPipeline');
 const AlwaysOnTopUI = require('./AlwaysOnTopUI');
 const TimerManager = require('./TimerManager');
+const BehavioralEventsDAO = require('../dao/BehavioralEventsDAO');
+const FocusRecordsDAO = require('../dao/FocusRecordsDAO');
+const TimerRecordsDAO = require('../dao/TimerRecordsDAO');
 
 // Initialize the event bus
 const eventBus = new EventBus();
@@ -21,6 +24,20 @@ const timerManager = new TimerManager();
 
 // Initialize the TimerManager database
 timerManager.initializeDatabase();
+
+// Initialize the database tables
+const initializeDatabaseTables = async () => {
+  try {
+    await BehavioralEventsDAO.createTable();
+    await FocusRecordsDAO.createTable();
+    await TimerRecordsDAO.createTable();
+    console.log('Database tables initialized successfully.');
+  } catch (error) {
+    console.error('Error initializing database tables:', error);
+  }
+};
+
+initializeDatabaseTables();
 
 // Subscribe to focus/idle events from FocusTrackingEngine and write them to the local DB using FocusRecordsDAO
 eventBus.subscribe('focusChange', (data) => {

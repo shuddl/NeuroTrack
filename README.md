@@ -400,3 +400,46 @@ To run the comprehensive test that checks imports and identifies potential probl
 
 4. **Check the Output**:
    The test will check imports and identify potential problems across all machine learning and database files. Review the output to ensure all tests pass successfully.
+
+## Database Setup and Initialization
+
+To ensure the database is properly set up and initialized, follow these steps:
+
+1. **Install Node.js**:
+   If you don't have Node.js installed, download and install it from [Node.js official website](https://nodejs.org/).
+
+2. **Install Dependencies**:
+   Ensure you have Node.js installed. Then, run the following command in the root directory of the project to install the necessary dependencies:
+   ```bash
+   npm install
+   ```
+
+3. **Run the Application**:
+   Execute the following command to start the application:
+   ```bash
+   npm start
+   ```
+
+4. **Initialize Database Tables**:
+   The application will automatically initialize the database tables for `BehavioralEvents`, `FocusRecords`, and `TimerRecords` during startup. You should see the following output in the console:
+   ```
+   Database tables initialized successfully.
+   ```
+
+5. **Check the Output**:
+   You should see the following output in the console:
+   ```
+   Hello World
+   ```
+
+   This confirms that the event bus is working and the application has started successfully.
+
+6. **Toggle Focus**:
+   - Click the "Goal" button to start the goal focus. This will pause the non-goal focus if it is running.
+   - Click the "Non-Goal" button to start the non-goal focus. This will pause the goal focus if it is running.
+
+7. **View Timer Value**:
+   The interface will display the current value of the timer.
+
+8. **Daily Totals**:
+   The application will automatically store the daily totals of the focus times at the end of each day.
