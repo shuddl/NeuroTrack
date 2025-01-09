@@ -83,6 +83,15 @@ ipcMain.on('start-focus-timer', (event, focusType) => {
   timerManager.startFocusTimer(focusType);
 });
 
+// Add event listeners for start-goal-timer and start-non-goal-timer events
+ipcMain.on('start-goal-timer', () => {
+  timerManager.startFocusTimer('goal');
+});
+
+ipcMain.on('start-non-goal-timer', () => {
+  timerManager.startFocusTimer('non-goal');
+});
+
 // Store daily totals at the end of the day
 const storeDailyTotals = () => {
   const date = new Date().toISOString().split('T')[0];
