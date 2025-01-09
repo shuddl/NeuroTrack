@@ -470,3 +470,61 @@ To run the tests for the NeuroTrack project, follow these steps:
 
 - All tests pass.
 - Test coverage is over 80%.
+
+## Step-by-Step Instructions for Cloning, Installing, and Running the Application
+
+To get started with NeuroTrack, follow these steps:
+
+1. **Clone the Repository**:
+   ```bash
+   git clone https://github.com/shuddl/NeuroTrack.git
+   ```
+
+2. **Navigate to the Project Directory**:
+   ```bash
+   cd NeuroTrack
+   ```
+
+3. **Install Dependencies**:
+   Ensure you have Node.js installed. Then, run the following command to install the necessary dependencies:
+   ```bash
+   npm install
+   ```
+
+4. **Run the Application**:
+   Execute the following command to start the application:
+   ```bash
+   npm start
+   ```
+
+5. **Check the Output**:
+   You should see the following output in the console:
+   ```
+   Hello World
+   ```
+
+   This confirms that the event bus is working and the application has started successfully.
+
+## Known Issues and Optional Advanced Features
+
+### Known Issues
+- **Platform Differences**:
+  - The application has been tested on macOS, Windows, and Linux. However, there may be minor differences in behavior and performance across different platforms.
+  - Some advanced features may not be fully supported on older versions of macOS. If you encounter any issues, please refer to the fallback instructions provided in the documentation.
+
+### Optional Advanced Features
+- **Machine Learning (ML)**:
+  - The application includes a Data & ML Pipeline for predictive distraction modeling and cognitive enhancement. This feature is optional and can be enabled or disabled based on user preference.
+- **Encryption Key Rotation**:
+  - The application supports encryption key rotation for enhanced security. This feature is optional and can be configured in the settings.
+
+## Future Expansions
+
+- **Slack Integration**:
+  - Future versions of NeuroTrack may include integration with Slack for real-time notifications and productivity tracking within team environments.
+
+- **Advanced Analytics**:
+  - Plans for advanced analytics features to provide deeper insights into user behavior and productivity patterns.
+
+- **Multi-User Setups**:
+  - Support for multi-user setups to enable collaborative productivity tracking and behavioral modification within teams or organizations.
