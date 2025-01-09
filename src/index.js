@@ -47,7 +47,7 @@ eventBus.subscribe('focusChange', (data) => {
 
 eventBus.subscribe('idleChange', (data) => {
   console.log('Idle Change Event:', data);
-  focusRecordsDAO.addRecord(data);
+  FocusRecordsDAO.insertRecord(data.activeWindow, data.state);
   behavioralModificationEngine.trackFocusEvent(data);
   cognitiveEnhancementModule.detectDeepWorkSessions(data);
   dataAndMLPipeline.performInference(data);
