@@ -78,13 +78,9 @@ eventBus.subscribe('BreakCompliance', (data) => {
   console.log('Break Compliance Event:', data);
 });
 
-// Add event listeners for start-goal-timer and start-non-goal-timer events
-ipcMain.on('start-goal-timer', () => {
-  timerManager.startGoalFocusTimer();
-});
-
-ipcMain.on('start-non-goal-timer', () => {
-  timerManager.startNonGoalFocusTimer();
+// Add event listeners for start-focus-timer event
+ipcMain.on('start-focus-timer', (event, focusType) => {
+  timerManager.startFocusTimer(focusType);
 });
 
 // Store daily totals at the end of the day
