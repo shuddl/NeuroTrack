@@ -3,9 +3,10 @@ const { ipcMain } = require('electron');
 
 class TimerManager {
   constructor() {
+    this.totalFocusTime = 0;
     this.goalFocusTime = 0;
     this.nonGoalFocusTime = 0;
-    this.currentTimer = null;
+    this.currentFocusType = null;
     this.timerInterval = null;
   }
 
@@ -17,41 +18,26 @@ class TimerManager {
     }
   }
 
-  startGoalFocusTimer() {
-    if (this.currentTimer !== 'goal') {
-      this.pauseNonGoalFocusTimer();
-      this.currentTimer = 'goal';
+  startFocusTimer(focusType) {
+    if (this.currentFocusType !== focusType) {
+      this.pauseFocusTimer();
+      this.currentFocusType = focusType;
       this.timerInterval = setInterval(() => {
-        this.goalFocusTime += 1;
-        this.emitGoalTimeUpdate();
+        this.totalFocusTime += 1;
+        if (this.currentFocusType === 'goal') {
+          this.goalFocusTime += 1;
+        } else {
+          this.nonGoalFocusTime += 1;
+        }
+        this.emitTimeUpdate();
       }, 1000);
-      ipcMain.emit('update-goal-time', this.goalFocusTime);
     }
   }
 
-  pauseGoalFocusTimer() {
-    if (this.currentTimer === 'goal') {
+  pauseFocusTimer() {
+    if (this.timerInterval) {
       clearInterval(this.timerInterval);
-      this.currentTimer = null;
-    }
-  }
-
-  startNonGoalFocusTimer() {
-    if (this.currentTimer !== 'non-goal') {
-      this.pauseGoalFocusTimer();
-      this.currentTimer = 'non-goal';
-      this.timerInterval = setInterval(() => {
-        this.nonGoalFocusTime += 1;
-        this.emitNonGoalTimeUpdate();
-      }, 1000);
-      ipcMain.emit('update-non-goal-time', this.nonGoalFocusTime);
-    }
-  }
-
-  pauseNonGoalFocusTimer() {
-    if (this.currentTimer === 'non-goal') {
-      clearInterval(this.timerInterval);
-      this.currentTimer = null;
+      this.timerInterval = null;
     }
   }
 
@@ -63,12 +49,12 @@ class TimerManager {
     }
   }
 
-  emitGoalTimeUpdate() {
-    ipcMain.emit('update-goal-time', this.goalFocusTime);
-  }
-
-  emitNonGoalTimeUpdate() {
-    ipcMain.emit('update-non-goal-time', this.nonGoalFocusTime);
+  emitTimeUpdate() {
+    ipcMain.emit('update-time', {
+      totalFocusTime: this.totalFocusTime,
+      goalFocusTime: this.goalFocusTime,
+      nonGoalFocusTime: this.nonGoalFocusTime
+    });
   }
 }
 

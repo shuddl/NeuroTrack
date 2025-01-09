@@ -10,11 +10,8 @@ contextBridge.exposeInMainWorld('electron', {
 });
 
 contextBridge.exposeInMainWorld('timers', {
-    updateGoalTime: (callback) => {
-        ipcRenderer.on('update-goal-time', (event, time) => callback(time));
-    },
-    updateNonGoalTime: (callback) => {
-        ipcRenderer.on('update-non-goal-time', (event, time) => callback(time));
+    updateTime: (callback) => {
+        ipcRenderer.on('update-time', (event, time) => callback(time));
     }
 });
 
@@ -30,13 +27,8 @@ window.addEventListener('DOMContentLoaded', () => {
         ipcRenderer.send('start-non-goal-timer');
     });
 
-    ipcRenderer.on('update-goal-time', (event, time) => {
-        const goalTimeElement = document.getElementById('goal-time');
-        goalTimeElement.textContent = new Date(time * 1000).toISOString().substr(11, 8);
-    });
-
-    ipcRenderer.on('update-non-goal-time', (event, time) => {
-        const nonGoalTimeElement = document.getElementById('non-goal-time');
-        nonGoalTimeElement.textContent = new Date(time * 1000).toISOString().substr(11, 8);
+    ipcRenderer.on('update-time', (event, time) => {
+        const timeElement = document.getElementById('time');
+        timeElement.textContent = new Date(time * 1000).toISOString().substr(11, 8);
     });
 });
