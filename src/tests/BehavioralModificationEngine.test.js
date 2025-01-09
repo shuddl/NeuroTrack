@@ -3,15 +3,18 @@ const sinon = require('sinon');
 const EventBus = require('../eventBus');
 const BehavioralModificationEngine = require('../BehavioralModificationEngine');
 const BehavioralEventsDAO = require('../dao/BehavioralEventsDAO');
+const TimerManager = require('../TimerManager');
 
 describe('BehavioralModificationEngine', () => {
   let eventBus;
   let behavioralModificationEngine;
   let behavioralEventsDAO;
+  let timerManager;
 
   beforeEach(async () => {
     eventBus = new EventBus();
-    behavioralModificationEngine = new BehavioralModificationEngine(eventBus);
+    timerManager = new TimerManager();
+    behavioralModificationEngine = new BehavioralModificationEngine(eventBus, timerManager);
     behavioralEventsDAO = new BehavioralEventsDAO();
     await behavioralEventsDAO.createTable();
   });
@@ -185,5 +188,85 @@ describe('BehavioralModificationEngine', () => {
     expect(logSyncFailureSpy.calledOnce).to.be.true;
     expect(logSyncFailureSpy.args[0][0]).to.deep.equal(error);
     done();
+  });
+
+  it('should trigger "RewardEvent" after 25 consecutive minutes of goal focus', (done) => {
+    const rewardEventSpy = sinon.spy();
+    eventBus.subscribe('RewardEvent', rewardEventSpy);
+
+    timerManager.startGoalFocusTimer();
+    setTimeout(() => {
+      timerManager.goalFocusTime = 25 * 60; // Simulate 25 minutes
+      timerManager.emitGoalTimeUpdate();
+    }, 100);
+
+    setTimeout(() => {
+      expect(rewardEventSpy.calledOnce).to.be.true;
+      expect(rewardEventSpy.args[0][0]).to.deep.include({ eventType: 'RewardEvent' });
+      done();
+    }, 200);
+  });
+
+  it('should publish "productivityDegradation" event if frequent context switching threshold is exceeded', (done) => {
+    const degradationEventSpy = sinon.spy();
+    eventBus.subscribe('productivityDegradation', degradationEventSpy);
+
+    const contextSwitchEvent = {
+      recordId: '1',
+      timestamp: new Date().toISOString(),
+      applicationName: 'TestApp',
+      userState: 'IDLE'
+    };
+
+    for (let i = 0; i < 6; i++) {
+      eventBus.publish('idleChange', contextSwitchEvent);
+    }
+
+    setTimeout(() => {
+      expect(degradationEventSpy.calledOnce).to.be.true;
+      expect(degradationEventSpy.args[0][0]).to.deep.include({ eventType: 'productivityDegradation' });
+      done();
+    }, 100);
+  });
+
+  it('should display a subtle UI prompt or color change in the always-on-top window upon triggering a "RewardEvent"', (done) => {
+    const displayRewardUISpy = sinon.spy();
+    eventBus.subscribe('displayRewardUI', displayRewardUISpy);
+
+    timerManager.startGoalFocusTimer();
+    setTimeout(() => {
+      timerManager.goalFocusTime = 25 * 60; // Simulate 25 minutes
+      timerManager.emitGoalTimeUpdate();
+    }, 100);
+
+    setTimeout(() => {
+      expect(displayRewardUISpy.calledOnce).to.be.true;
+      done();
+    }, 200);
+  });
+
+  it('should handle the corner case where the user toggles "goal" but then goes idle', (done) => {
+    const rewardEventSpy = sinon.spy();
+    eventBus.subscribe('RewardEvent', rewardEventSpy);
+
+    timerManager.startGoalFocusTimer();
+    setTimeout(() => {
+      timerManager.goalFocusTime = 20 * 60; // Simulate 20 minutes
+      timerManager.emitGoalTimeUpdate();
+    }, 100);
+
+    setTimeout(() => {
+      eventBus.publish('idleChange', { recordId: '1', timestamp: new Date().toISOString(), applicationName: 'TestApp', userState: 'IDLE' });
+    }, 200);
+
+    setTimeout(() => {
+      timerManager.goalFocusTime = 25 * 60; // Simulate 25 minutes
+      timerManager.emitGoalTimeUpdate();
+    }, 300);
+
+    setTimeout(() => {
+      expect(rewardEventSpy.called).to.be.false;
+      done();
+    }, 400);
   });
 });

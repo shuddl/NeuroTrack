@@ -4,16 +4,19 @@ const { v4: uuidv4 } = require('uuid');
 const crypto = require('crypto');
 
 class BehavioralModificationEngine extends EventEmitter {
-  constructor(eventBus) {
+  constructor(eventBus, timerManager) {
     super();
     this.eventBus = eventBus;
+    this.timerManager = timerManager;
     this.focusIntervals = new RingBuffer(100);
     this.contextSwitches = new RingBuffer(100);
-    this.sustainedFocusThreshold = 5; // Example threshold
+    this.sustainedFocusThreshold = 25 * 60; // 25 minutes in seconds
+    this.contextSwitchThreshold = 5; // Example threshold for context switches
     this.behavioralEventsDAO = new BehavioralEventsDAO();
 
     this.eventBus.subscribe('focusChange', this.trackFocusEvent.bind(this));
     this.eventBus.subscribe('idleChange', this.trackContextSwitch.bind(this));
+    this.timerManager.on('update-goal-time', this.checkGoalFocusTime.bind(this));
   }
 
   async trackFocusEvent(data) {
@@ -53,8 +56,14 @@ class BehavioralModificationEngine extends EventEmitter {
       console.error('Error inserting context switch event:', error);
     }
 
-    if (this.contextSwitches.getItems().length >= this.sustainedFocusThreshold) {
+    if (this.contextSwitches.getItems().length >= this.contextSwitchThreshold) {
       this.triggerProductivityDegradationEvent();
+    }
+  }
+
+  async checkGoalFocusTime(goalFocusTime) {
+    if (goalFocusTime >= this.sustainedFocusThreshold) {
+      this.triggerRewardEvent();
     }
   }
 
@@ -72,6 +81,9 @@ class BehavioralModificationEngine extends EventEmitter {
     } catch (error) {
       console.error('Error inserting reward event:', error);
     }
+
+    // Display subtle UI prompt or color change in the always-on-top window
+    this.eventBus.publish('displayRewardUI', {});
   }
 
   triggerProductivityDegradationEvent() {
