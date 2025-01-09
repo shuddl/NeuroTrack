@@ -1,11 +1,11 @@
-const sqlite3 = require('sqlite3').verbose();
+const FocusRecordsDAO = require('../dao/FocusRecordsDAO');
 
 class FocusRecordsCleanup {
   constructor() {
-    this.db = new sqlite3.Database(':memory:');
+    this.db = FocusRecordsDAO.db;
   }
 
-  cleanupOldRecords(retentionPeriodDays) {
+  async cleanupOldRecords(retentionPeriodDays) {
     const retentionPeriodMs = retentionPeriodDays * 24 * 60 * 60 * 1000;
     const cutoffDate = new Date(Date.now() - retentionPeriodMs).toISOString();
 
@@ -13,13 +13,12 @@ class FocusRecordsCleanup {
       DELETE FROM FocusRecords
       WHERE timestamp < ?
     `;
-    this.db.run(sql, [cutoffDate], function (err) {
-      if (err) {
-        console.error('Error cleaning up old records:', err);
-      } else {
-        console.log(`Old records older than ${retentionPeriodDays} days have been cleaned up.`);
-      }
-    });
+    try {
+      await this.db.run(sql, [cutoffDate]);
+      console.log(`Old records older than ${retentionPeriodDays} days have been cleaned up.`);
+    } catch (err) {
+      console.error('Error cleaning up old records:', err);
+    }
   }
 }
 

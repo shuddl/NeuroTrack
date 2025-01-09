@@ -22,8 +22,3 @@ class AlwaysOnTopUI {
 }
 
 module.exports = AlwaysOnTopUI;
-
-app.on('ready', () => {
-  const eventBus = new (require('./eventBus'))();
-  new AlwaysOnTopUI(eventBus);
-});
