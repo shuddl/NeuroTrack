@@ -25,11 +25,15 @@ timerManager.initializeDatabase(); // P27d7
 // Subscribe to focus/idle events from FocusTrackingEngine and write them to the local DB using FocusRecordsDAO
 eventBus.subscribe('focusChange', (data) => {
   console.log('Focus Change Event:', data);
+  dataAndMLPipeline.performInference(data); // P227a
+});
+
 eventBus.subscribe('idleChange', (data) => {
   console.log('Idle Change Event:', data);
   focusRecordsDAO.addRecord(data);
   behavioralModificationEngine.trackFocusEvent(data);
   cognitiveEnhancementModule.detectDeepWorkSessions(data);
+  dataAndMLPipeline.performInference(data); // P227a
 });
 
 // Subscribe to reward and degradation events from BehavioralModificationEngine and log them to the console
@@ -62,7 +66,7 @@ eventBus.subscribe('distractionProbabilityUpdated', (data) => {
 // Subscribe to daily session events and trigger the ML pipeline
 eventBus.subscribe('dailySession', (data) => {
   console.log('Daily Session Event:', data);
-  dataAndMLPipeline.handleDailySession(data);
+  dataAndMLPipeline.handleDailySession(data); // Pa821
 });
 
 // Subscribe to break events from CognitiveEnhancementModule
