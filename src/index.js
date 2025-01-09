@@ -15,10 +15,10 @@ const eventBus = new EventBus();
 
 // Initialize the modules
 const focusTrackingEngine = new FocusTrackingEngine(eventBus);
-const behavioralModificationEngine = new BehavioralModificationEngine(eventBus);
+const timerManager = new TimerManager();
+const behavioralModificationEngine = new BehavioralModificationEngine(eventBus, timerManager);
 const cognitiveEnhancementModule = new CognitiveEnhancementModule(eventBus);
 const dataAndMLPipeline = new DataAndMLPipeline(eventBus);
-const timerManager = new TimerManager();
 
 // Initialize the TimerManager database
 timerManager.initializeDatabase();
