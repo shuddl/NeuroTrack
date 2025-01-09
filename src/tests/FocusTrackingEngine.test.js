@@ -2,14 +2,29 @@ const { expect } = require('chai');
 const sinon = require('sinon');
 const EventBus = require('../eventBus');
 const FocusTrackingEngine = require('../FocusTrackingEngine');
+const FocusRecordsDAO = require('../dao/FocusRecordsDAO');
+const db = require('../db/connection');
 
 describe('FocusTrackingEngine', () => {
   let eventBus;
   let focusTrackingEngine;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     eventBus = new EventBus();
     focusTrackingEngine = new FocusTrackingEngine(eventBus);
+    await FocusRecordsDAO.createTable();
+  });
+
+  afterEach(async () => {
+    await new Promise((resolve, reject) => {
+      db.run('DELETE FROM focus_records', (err) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve();
+        }
+      });
+    });
   });
 
   it('should detect application switch', (done) => {
@@ -58,5 +73,27 @@ describe('FocusTrackingEngine', () => {
       expect(stopIdleCheckSpy.calledOnce).to.be.true;
       done();
     }, 100);
+  });
+
+  it('should persist focus change events to the database', async () => {
+    const application = 'TestApp';
+    const state = 'Work Focus';
+
+    await focusTrackingEngine.handleFocusChange({ activeWindow: application });
+
+    const records = await FocusRecordsDAO.queryRecords();
+    expect(records).to.have.lengthOf(1);
+    expect(records[0]).to.include({ application, state });
+  });
+
+  it('should persist idle change events to the database', async () => {
+    const application = 'TestApp';
+    const state = 'Break/Leisure';
+
+    await focusTrackingEngine.handleIdleChange({ activeWindow: application });
+
+    const records = await FocusRecordsDAO.queryRecords();
+    expect(records).to.have.lengthOf(1);
+    expect(records[0]).to.include({ application, state });
   });
 });
