@@ -2,11 +2,7 @@ const { EventEmitter } = require('eventemitter3');
 const WindowsFocusTracker = require('./platforms/WindowsFocusTracker');
 const MacOSFocusTracker = require('./platforms/MacOSFocusTracker');
 const LinuxFocusTracker = require('./platforms/LinuxFocusTracker');
-const { v4: uuidv4 } = require('uuid');
-const crypto = require('crypto');
-const fs = require('fs');
-const path = require('path');
-const { execSync } = require('child_process');
+
 
 class FocusTrackingEngine extends EventEmitter {
   constructor(eventBus) {
@@ -23,8 +19,6 @@ class FocusTrackingEngine extends EventEmitter {
 
     this.startIdleCheck();
 
-    this.encryptionKey = this.loadOrGenerateKey();
-    this.signKernelModules();
   }
 
   getPlatformTracker() {
@@ -40,7 +34,7 @@ class FocusTrackingEngine extends EventEmitter {
     }
   }
 
-  handleFocusChange(data) {
+  async handleFocusChange(data) {
     this.lastActivityTime = Date.now();
     if (this.currentState !== 'Work Focus') {
       this.currentState = 'Work Focus';
@@ -53,9 +47,14 @@ class FocusTrackingEngine extends EventEmitter {
       const encryptedEventData = this.encryptData(eventData);
       this.eventBus.publish('focusChange', encryptedEventData);
     }
+    try {
+      await FocusRecordsDAO.insertRecord(data.activeWindow, this.currentState);
+    } catch (error) {
+      console.error('Error inserting focus record:', error);
+    }
   }
 
-  handleIdleChange(data) {
+  async handleIdleChange(data) {
     if (Date.now() - this.lastActivityTime > this.idleThreshold) {
       if (this.currentState !== 'Break/Leisure') {
         this.currentState = 'Break/Leisure';
@@ -67,6 +66,11 @@ class FocusTrackingEngine extends EventEmitter {
         };
         const encryptedEventData = this.encryptData(eventData);
         this.eventBus.publish('idleChange', encryptedEventData);
+      }
+      try {
+        await FocusRecordsDAO.insertRecord(data.activeWindow, this.currentState);
+      } catch (error) {
+        console.error('Error inserting idle record:', error);
       }
     }
   }

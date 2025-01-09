@@ -1,10 +1,12 @@
+const { app, BrowserWindow } = require('electron');
+const path = require('path');
 const EventBus = require('./eventBus');
 const FocusTrackingEngine = require('./FocusTrackingEngine');
 const BehavioralModificationEngine = require('./BehavioralModificationEngine');
 const CognitiveEnhancementModule = require('./CognitiveEnhancementModule');
 const DataAndMLPipeline = require('./DataAndMLPipeline');
 const AlwaysOnTopUI = require('./AlwaysOnTopUI');
-const FocusRecordsDAO = require('./FocusRecordsDAO');
+
 
 // Initialize the event bus
 const eventBus = new EventBus();
@@ -15,16 +17,11 @@ const behavioralModificationEngine = new BehavioralModificationEngine(eventBus);
 const cognitiveEnhancementModule = new CognitiveEnhancementModule(eventBus);
 const dataAndMLPipeline = new DataAndMLPipeline(eventBus);
 const alwaysOnTopUI = new AlwaysOnTopUI(eventBus);
-const focusRecordsDAO = new FocusRecordsDAO();
+
 
 // Subscribe to focus/idle events from FocusTrackingEngine and write them to the local DB using FocusRecordsDAO
 eventBus.subscribe('focusChange', (data) => {
   console.log('Focus Change Event:', data);
-  focusRecordsDAO.addRecord(data);
-  behavioralModificationEngine.trackFocusEvent(data);
-  cognitiveEnhancementModule.detectDistractionPatterns(data);
-});
-
 eventBus.subscribe('idleChange', (data) => {
   console.log('Idle Change Event:', data);
   focusRecordsDAO.addRecord(data);
@@ -59,10 +56,47 @@ eventBus.subscribe('distractionProbabilityUpdated', (data) => {
   console.log('Distraction Probability Updated:', data);
 });
 
-// Bootstrap the application
-function bootstrap() {
-  console.log('Hello World');
-  eventBus.publish('appStarted', { message: 'Application has started' });
+// Subscribe to daily session events and trigger the ML pipeline
+eventBus.subscribe('dailySession', (data) => {
+  console.log('Daily Session Event:', data);
+  dataAndMLPipeline.handleDailySession(data);
+});
+
+// Subscribe to break events from CognitiveEnhancementModule
+eventBus.subscribe('BreakScheduled', (data) => {
+  console.log('Break Scheduled Event:', data);
+});
+
+eventBus.subscribe('BreakCompliance', (data) => {
+  console.log('Break Compliance Event:', data);
+});
+
+// Create a new BrowserWindow and load index.html
+function createWindow() {
+  const mainWindow = new BrowserWindow({
+    width: 800,
+    height: 600,
+    webPreferences: {
+      preload: path.join(__dirname, 'ui', 'preload.js')
+    }
+  });
+
+  mainWindow.loadFile(path.join(__dirname, 'ui', 'index.html'));
 }
 
-bootstrap();
+// Bootstrap the application
+app.whenReady().then(() => {
+  createWindow();
+
+  app.on('activate', () => {
+    if (BrowserWindow.getAllWindows().length === 0) {
+      createWindow();
+    }
+  });
+});
+
+app.on('window-all-closed', () => {
+  if (process.platform !== 'darwin') {
+    app.quit();
+  }
+});
