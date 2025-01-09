@@ -17,12 +17,19 @@
     </div>
     <button id="goal-button">Goal</button>
     <button id="non-goal-button">Non-Goal</button>
+    <div id="break-compliance">
+        <h2>Break Compliance Feedback</h2>
+        <button id="accept-break">Accept Break</button>
+        <button id="skip-break">Skip Break</button>
+    </div>
     <script src="preload.js"></script>
     <script>
         const goalTimeElement = document.getElementById('goal-time');
         const nonGoalTimeElement = document.getElementById('non-goal-time');
         const goalButton = document.getElementById('goal-button');
         const nonGoalButton = document.getElementById('non-goal-button');
+        const acceptBreakButton = document.getElementById('accept-break');
+        const skipBreakButton = document.getElementById('skip-break');
 
         window.timers.updateTime((time) => {
             goalTimeElement.textContent = new Date(time.goalFocusTime * 1000).toISOString().substr(11, 8);
@@ -35,6 +42,14 @@
 
         nonGoalButton.addEventListener('click', () => {
             window.electron.send('start-non-goal-timer');
+        });
+
+        acceptBreakButton.addEventListener('click', () => {
+            window.electron.send('accept-break');
+        });
+
+        skipBreakButton.addEventListener('click', () => {
+            window.electron.send('skip-break');
         });
     </script>
 </body>
