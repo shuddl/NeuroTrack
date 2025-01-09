@@ -378,3 +378,25 @@ To get started with NeuroTrack on macOS, follow these steps:
 
 - **Support**:
   - For any issues or questions, please refer to the support section in the documentation or contact our support team.
+
+## Instructions to Run Comprehensive Test
+
+To run the comprehensive test that checks imports and identifies potential problems across all machine learning and database files, follow these steps:
+
+1. **Install Node.js**:
+   If you don't have Node.js installed, download and install it from [Node.js official website](https://nodejs.org/).
+
+2. **Install Dependencies**:
+   Ensure you have Node.js installed. Then, run the following command in the root directory of the project to install the necessary dependencies:
+   ```bash
+   npm install
+   ```
+
+3. **Run the Comprehensive Test**:
+   Execute the following command to run the comprehensive test:
+   ```bash
+   npm test
+   ```
+
+4. **Check the Output**:
+   The test will check imports and identify potential problems across all machine learning and database files. Review the output to ensure all tests pass successfully.
